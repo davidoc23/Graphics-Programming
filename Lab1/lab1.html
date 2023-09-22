@@ -38,6 +38,7 @@
 		// Create a filled rectangle 
         ctx.fillRect(10, 10, 200, 150);
 
+
         //Add the first circle
         ctx.beginPath();    //Move to the point to start drawing the circle
         ctx.arc(125, 250, 50, 0, Math.PI * 2, true);    // 1st circle
@@ -50,13 +51,18 @@
         ctx.fillStyle = 'yellow';   //Pick the colour for the circle.
         ctx.fill();     //Colour the inside of the circle.
         ctx.stroke();   //Draw the circle outline
-
-        ctx.beginPath();    //Move to the circle point to start drawing it.
+        
+        ctx.beginPath();    //Move to the semi-circle point to start drawing it.
         ctx.arc(125, 390, 50, 0, Math.PI * 1, true);    // semi-circle
-        ctx.fillStyle = 'purple';   //Pick the colour for the circle.
-        ctx.fill();     //Colour the inside of the circle.
+        ctx.fillStyle = 'purple';   //Pick the colour for the semi- circle.
+        ctx.fill();     //Colour the inside of the semi-circle.
         ctx.stroke();   //Draw the semi-circle outline
 
+        ctx.beginPath(); //Move to the next point to start drawing it
+        ctx.fillStyle = 'rgb(255, 0, 0, 0.2)'; //Add colour with transparency 
+        ctx.fillRect(250, 10, 200, 150); //Second rectangle.
+        ctx.fill(); //Colour the rectangle
+        ctx.stroke(); //Draw the rectangle
 
         //Add name to the canvas
         ctx.font = '50px serif';
