@@ -10,7 +10,7 @@
 	
     canvas
     {
-        border:black 3px solid;  
+        border:black 5px solid;  
     
     }
     </style>
@@ -22,6 +22,8 @@
     <canvas id="canvasOne"></canvas>
 
     <script type="text/javascript">
+        canvasOne.width = 200;
+
 		// Gets a handle to the element with id canvasOne.
 		const canvas = document.getElementById("canvasOne");
 
@@ -34,6 +36,7 @@
 
 		// Create a filled rectangle 
         ctx.fillRect(0, 0, 200, 150);
+        
         
         
     </script>
