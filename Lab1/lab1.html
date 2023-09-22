@@ -41,10 +41,14 @@
         //Add the first circle
         ctx.beginPath();    //Move to the point to start drawing the circle
         ctx.arc(125, 250, 50, 0, Math.PI * 2, true); // 1st circle
+        ctx.fillStyle = 'green'; //Pick the colour for the circle.
+        ctx.fill();//Colour the circle.
         ctx.stroke();// Draw the circle outline
-
+        
         ctx.beginPath();    //Move to the circle point to start drawing it.
         ctx.arc(325, 250, 50, 0, Math.PI * 2, true);    // 2nd Circle
+        ctx.fillStyle = 'yellow';   //Pick the colour for the circle.
+        ctx.fill();     //Colour the circle.
         ctx.stroke();   //Draw the circle outline
 
 
