@@ -38,11 +38,15 @@
 		// Create a filled rectangle 
         ctx.fillRect(10, 10, 200, 150);
 
-        //Add two circles
-        ctx.beginPath();    
+        //Add the first circle
+        ctx.beginPath();    //Move to the point to start drawing the circle
         ctx.arc(125, 250, 50, 0, Math.PI * 2, true); // 1st circle
-        
-        ctx.stroke();
+        ctx.stroke();// Draw the circle outline
+
+        ctx.beginPath();    //Move to the circle point to start drawing it.
+        ctx.arc(325, 250, 50, 0, Math.PI * 2, true);    // 2nd Circle
+        ctx.stroke();   //Draw the circle outline
+
 
         //Add name to the canvas
         ctx.font = '50px serif';
