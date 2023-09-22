@@ -22,7 +22,8 @@
     <canvas id="canvasOne"></canvas>
 
     <script type="text/javascript">
-        canvasOne.width = 200;
+        canvasOne.width = 500;
+        canvasOne.height = 500;
 
 		// Gets a handle to the element with id canvasOne.
 		const canvas = document.getElementById("canvasOne");
@@ -35,8 +36,18 @@
         ctx.fillStyle = "blue";
 
 		// Create a filled rectangle 
-        ctx.fillRect(0, 0, 200, 150);
+        ctx.fillRect(10, 10, 200, 150);
+
+        //Add two circles
+        ctx.beginPath();    
+        ctx.arc(125, 250, 50, 0, Math.PI * 2, true); // 1st circle
         
+        ctx.stroke();
+
+        //Add name to the canvas
+        ctx.font = '50px serif';
+        ctx.fillStyle = 'black';
+        ctx.fillText('David', 15, 70);
         
         
     </script>
