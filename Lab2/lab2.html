@@ -1,22 +1,26 @@
-
 <!DOCTYPE html>
 
 <html>
 
   <head>
     <meta charset="UTF-8">
-    <title>Canvas</title>
+    <title>BouncingBallAnimation</title>
 
     <style type="text/css">
-      body {
+      body 
+      {
           background-color: white;
+      }
+      canvas
+      {
+        border: 1px solid black;
       }
     </style>
 
   </head>
 
   <body>
-
+    <h1>David O Connor</h1>
     <canvas id="canvas-for-ball"></canvas>
 
     <script type="text/javascript">
@@ -28,7 +32,8 @@
       // The vertical location of the ball.
       var y = 10;
       // A function to repeat every time the animation loops.
-      function repeatme() {
+      function repeatme() 
+      {
         // Draw the ball (stroked, not filled).
         ctx.beginPath();
         ctx.arc(50, y, 3, 0, 2 * Math.PI);
