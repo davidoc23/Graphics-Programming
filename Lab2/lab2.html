@@ -29,20 +29,66 @@
       // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
       
-      // The vertical location of the ball.
-      var y = 10;
+      // Set the canvas size
+      canvas.width = window.innerWidth - 20; // Adjust as needed
+      canvas.height = window.innerHeight - 100; // Adjust as needed
+
+      class Ball
+      {
+        constructor(x, y, radius, vx, vy)
+        {
+          this.x = x;
+          this.y = y;
+          this.radius = radius;
+          this.vx = vx;
+          this.vy = vy;
+        }
+
+        draw()
+        {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = 'blue'; 
+          ctx.fill();
+          ctx.closePath();
+        }
+
+        move()
+        {
+          // Clear the canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Update the ball's position
+          this.x += this.vx;
+          this.y += this.vy;
+
+          // Draw the ball
+          this.draw();
+
+          // Check for collisions with the canvas boundaries
+          if (this.y + this.radius > canvas.height || this.y - this.radius < 0) 
+          {
+            // Reverse the vertical velocity when hitting top or bottom
+            this.vy *= -1;
+          }
+
+          if (this.x + this.radius > canvas.width || this.x - this.radius < 0) 
+          {
+            // Reverse the horizontal velocity when hitting left or right
+            this.vx *= -1;
+          }
+        }
+      }
+
+      const ball = new Ball(canvas.width / 2, canvas.height / 2, 30, 2, 5);
+      
       // A function to repeat every time the animation loops.
       function repeatme() 
-      {
-        // Draw the ball (stroked, not filled).
-        ctx.beginPath();
-        ctx.arc(50, y, 3, 0, 2 * Math.PI);
-        ctx.stroke();
-        
-        // Update the y location.
-        y += 1;
-        
+      { 
+
         window.requestAnimationFrame(repeatme);
+        ball.move();
+
       }
       
       // Get the animation going.
