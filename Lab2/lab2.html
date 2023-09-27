@@ -31,7 +31,7 @@
       
       // Set the canvas size
       canvas.width = window.innerWidth - 20; // Adjust as needed
-      canvas.height = window.innerHeight - 100; // Adjust as needed
+      canvas.height = window.innerHeight - 150; // Adjust as needed
 
       class Ball
       {
@@ -80,7 +80,8 @@
         }
       }
 
-      const ball = new Ball(canvas.width / 2, canvas.height / 2, 30, 2, 5);
+      //Creates the ball object and sets he balls radius, speed in the vertical and horizontal direction.
+      const ball = new Ball(canvas.width / 2, canvas.height / 2, 30, 5, 10);
       
       // A function to repeat every time the animation loops.
       function repeatme() 
