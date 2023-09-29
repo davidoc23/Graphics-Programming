@@ -44,14 +44,27 @@
           this.vy = vy;
         }
 
-        draw()
+        draw() 
         {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = 'blue'; 
+          ctx.fillStyle = 'white';
           ctx.fill();
           ctx.closePath();
+
+          // Draw the X inside the circle
+          ctx.strokeStyle = 'blue'; // You can change the color of the X as needed
+          ctx.lineWidth = 5; // You can adjust the line width as needed
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius+10, 0, Math.PI * 2);
+          ctx.moveTo(this.x - this.radius, this.y - this.radius);
+          ctx.lineTo(this.x + this.radius, this.y + this.radius);
+          ctx.moveTo(this.x + this.radius, this.y - this.radius);
+          ctx.lineTo(this.x - this.radius, this.y + this.radius);
+          ctx.stroke();
+          ctx.closePath();
         }
+
 
         move()
         {
