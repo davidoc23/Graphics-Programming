@@ -46,59 +46,39 @@
 
         draw() 
         {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          // Draw the X inside the circle
-          ctx.strokeStyle = 'red'; // You can change the color of the X as needed
-          ctx.lineWidth = 10; // You can adjust the line width as needed
+          // Draw the prohibition symbol (circle with a diagonal line)
+          ctx.strokeStyle = 'red'; // You can change the color as needed
+          ctx.lineWidth = 13; // You can adjust the line width as needed
+
+          // Draw the circle
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.arc(this.x, this.y, this.radius+13, 0, Math.PI * 2);
 
-          //starting point1
-          var tx = this.x + this.radius * Math.cos(4); 
-          var ty = this.y + this.radius * Math.sin(4);
+          // Calculate the coordinates for the diagonal line
+          const startX = this.x + this.radius + Math.cos(Math.PI);
+          const startY = this.y + this.radius + Math.sin(Math.PI);
+          const endX = this.x - this.radius - Math.cos(Math.PI);
+          const endY = this.y - this.radius - Math.sin(Math.PI);
 
-          //line to 
-          var tx1 = this.x + this.radius * Math.cos(Math.PI/2);
-          var ty1 = this.y + this.radius * Math.sin(Math.PI);
+          // Draw the diagonal line
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(endX, endY);
 
+          // Calculate the coordinates for the start and end points of the line
+          const startX1 = this.x + this.radius + Math.cos(Math.PI);
+          const startY1 = this.y - this.radius + Math.sin(Math.PI);
+          const endX2 = this.x - this.radius + Math.cos(Math.PI);
+          const endY2 = this.y + this.radius + Math.sin(Math.PI);
 
-          //starting point2
-          var tx4 = this.x + this.radius * Math.cos(7);
-          var ty4 = this.y + this.radius * Math.sin(2);
+          // Draw the second diagonal line
+          ctx.moveTo(startX1, startY1);
+          ctx.lineTo(endX2, endY2);
 
-          //line to
-          var tx5 = this.x + this.radius * Math.cos(Math.PI/2);
-          var ty5 = this.y + this.radius * Math.sin(Math.PI);
-
-
-          //starting point 3
-          var tx2 = this.x + this.radius * Math.cos(4);
-          var ty2 = this.y + this.radius * Math.sin(2);
-
-          //line to
-          var tx3 = this.x + this.radius * Math.cos(Math.PI/2);
-          var ty3 = this.y + this.radius * Math.sin(Math.PI);
-
-
-
-          //starting point 4
-          var tx6 = this.x + this.radius * Math.cos(7);
-          var ty6 = this.y + this.radius * Math.sin(4);
-
-          //line to 
-          var tx7 = this.x + this.radius * Math.cos(Math.PI/2);
-          var ty7 = this.y + this.radius * Math.sin(Math.PI); 
-
-          ctx.moveTo(tx, ty);
-          ctx.lineTo(tx1,ty1);
-          ctx.moveTo(tx4,ty4);
-          ctx.lineTo(tx5,ty5);
-          ctx.moveTo(tx2,ty2);
-          ctx.lineTo(tx3,ty3);
-          ctx.moveTo(tx6,ty6);
-          ctx.lineTo(tx7,ty7);
           ctx.stroke();
           ctx.closePath();
+          
         }
 
 
@@ -134,7 +114,7 @@
       }
 
       //Creates the ball object and sets he balls radius, speed in the vertical and horizontal direction.
-      const ball = new Ball(canvas.width / 2, canvas.height / 2, 30, 5,10);
+      const ball = new Ball(canvas.width / 2, canvas.height / 5, 40, 0,0);
       
       // A function to repeat every time the animation loops.
       function repeatme() 
@@ -143,8 +123,6 @@
         ball.move();
         window.requestAnimationFrame(repeatme);
         
-
-
       }
       
       // Get the animation going.
