@@ -46,21 +46,57 @@
 
         draw() 
         {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.beginPath();
-          ctx.fillStyle = 'white';
-          ctx.fill();
-          ctx.closePath();
 
           // Draw the X inside the circle
           ctx.strokeStyle = 'red'; // You can change the color of the X as needed
           ctx.lineWidth = 10; // You can adjust the line width as needed
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius+10, 0, Math.PI * 2);
-          ctx.moveTo(this.x - this.radius, this.y - this.radius);
-          ctx.lineTo(this.x + this.radius, this.y + this.radius);
-          ctx.moveTo(this.x + this.radius, this.y - this.radius);
-          ctx.lineTo(this.x - this.radius, this.y + this.radius);
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+
+          //starting point1
+          var tx = this.x + this.radius * Math.cos(4); 
+          var ty = this.y + this.radius * Math.sin(4);
+
+          //line to 
+          var tx1 = this.x + this.radius * Math.cos(Math.PI/2);
+          var ty1 = this.y + this.radius * Math.sin(Math.PI);
+
+
+          //starting point2
+          var tx4 = this.x + this.radius * Math.cos(7);
+          var ty4 = this.y + this.radius * Math.sin(2);
+
+          //line to
+          var tx5 = this.x + this.radius * Math.cos(Math.PI/2);
+          var ty5 = this.y + this.radius * Math.sin(Math.PI);
+
+
+          //starting point 3
+          var tx2 = this.x + this.radius * Math.cos(4);
+          var ty2 = this.y + this.radius * Math.sin(2);
+
+          //line to
+          var tx3 = this.x + this.radius * Math.cos(Math.PI/2);
+          var ty3 = this.y + this.radius * Math.sin(Math.PI);
+
+
+
+          //starting point 4
+          var tx6 = this.x + this.radius * Math.cos(7);
+          var ty6 = this.y + this.radius * Math.sin(4);
+
+          //line to 
+          var tx7 = this.x + this.radius * Math.cos(Math.PI/2);
+          var ty7 = this.y + this.radius * Math.sin(Math.PI); 
+
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(tx1,ty1);
+          ctx.moveTo(tx4,ty4);
+          ctx.lineTo(tx5,ty5);
+          ctx.moveTo(tx2,ty2);
+          ctx.lineTo(tx3,ty3);
+          ctx.moveTo(tx6,ty6);
+          ctx.lineTo(tx7,ty7);
           ctx.stroke();
           ctx.closePath();
         }
@@ -78,14 +114,18 @@
           // Draw the ball
           this.draw();
 
+          console.log(this.x);
+          console.log(this.y);
+          
+
           // Check for collisions with the canvas boundaries
-          if (this.y + this.radius+10 > canvas.height || this.y - this.radius-10 < 0) 
+          if (this.y + this.radius > canvas.height || this.y - this.radius < 0) 
           {
             // Reverse the vertical velocity when hitting top or bottom
             this.vy *= -1;
           }
 
-          if (this.x + this.radius+10 > canvas.width || this.x - this.radius-10 < 0) 
+          if (this.x + this.radius > canvas.width || this.x - this.radius < 0) 
           {
             // Reverse the horizontal velocity when hitting left or right
             this.vx *= -1;
@@ -94,14 +134,16 @@
       }
 
       //Creates the ball object and sets he balls radius, speed in the vertical and horizontal direction.
-      const ball = new Ball(canvas.width / 2, canvas.height / 2, 30, 2, 2);
+      const ball = new Ball(canvas.width / 2, canvas.height / 2, 30, 5,10);
       
       // A function to repeat every time the animation loops.
       function repeatme() 
       { 
 
-        window.requestAnimationFrame(repeatme);
         ball.move();
+        window.requestAnimationFrame(repeatme);
+        
+
 
       }
       
