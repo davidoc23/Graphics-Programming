@@ -30,8 +30,8 @@
       var ctx = canvas.getContext("2d");
       
       // Set the canvas size
-      canvas.width = window.innerWidth -20; // Adjust as needed
-      canvas.height = window.innerHeight - 150; // Adjust as needed
+      canvas.width = 600 // Adjust as needed
+      canvas.height = 500 // Adjust as needed
 
       class Ball
       {
@@ -94,18 +94,14 @@
           // Draw the ball
           this.draw();
 
-          console.log(this.x);
-          console.log(this.y);
-          
-
           // Check for collisions with the canvas boundaries
-          if (this.y + this.radius > canvas.height || this.y - this.radius < 0) 
+          if (this.y + this.radius+19 > canvas.height || this.y - this.radius-19 < 0) 
           {
             // Reverse the vertical velocity when hitting top or bottom
             this.vy *= -1;
           }
 
-          if (this.x + this.radius > canvas.width || this.x - this.radius < 0) 
+          if (this.x + this.radius+19 > canvas.width || this.x - this.radius-19 < 0) 
           {
             // Reverse the horizontal velocity when hitting left or right
             this.vx *= -1;
@@ -114,7 +110,7 @@
       }
 
       //Creates the ball object and sets he balls radius, speed in the vertical and horizontal direction.
-      const ball = new Ball(canvas.width / 2, canvas.height / 5, 40, 0,0);
+      const ball = new Ball(canvas.width / 2, canvas.height / 2, 30, 1,2);
       
       // A function to repeat every time the animation loops.
       function repeatme() 
