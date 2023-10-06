@@ -169,9 +169,8 @@
         // Mouse move event listener to move the paddles vertically based on mouse position
         canvas.addEventListener("mousemove", function(event) 
         { 
-          const mouseY = event.clientY - canvas.getBoundingClientRect().top;
-          paddleLeft.moveToY(mouseY - paddleLeft.height / 2);
-          //paddleRight.moveToY(mouseY - paddleRight.height / 2);
+          var mouseY = event.clientY - canvas.offsetTop;
+          paddleLeft.y = mouseY - paddleLeft.height/2;
           noClicks += 1;
           console.log(noClicks);
         });
