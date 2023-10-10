@@ -39,11 +39,17 @@
                 this.radius = radius;
                 this.vx = vx;
                 this.vy = vy;
+                this.rotation = 0; // Initial rotation angle
             }
 
             draw() 
             {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Save the current canvas state
+                ctx.save();
+
+                // Translate and rotate the canvas
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
 
                 // Draw the prohibition symbol (circle with a diagonal line)
                 ctx.strokeStyle = 'red'; // You can change the color as needed
@@ -51,23 +57,23 @@
 
                 // Draw the circle
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius + 15, 0, Math.PI * 2);
+                ctx.arc(0, 0, this.radius + 15, 0, Math.PI * 2);
 
                 // Calculate the coordinates for the diagonal line
-                const startX = this.x + this.radius + Math.cos(Math.PI);
-                const startY = this.y + this.radius + Math.sin(Math.PI);
-                const endX = this.x - this.radius - Math.cos(Math.PI);
-                const endY = this.y - this.radius - Math.sin(Math.PI);
+                const startX = this.radius + Math.cos(Math.PI);
+                const startY = this.radius + Math.sin(Math.PI);
+                const endX = -this.radius - Math.cos(Math.PI);
+                const endY = -this.radius - Math.sin(Math.PI);
 
                 // Draw the diagonal line
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(endX, endY);
 
                 // Calculate the coordinates for the start and end points of the line
-                const startX1 = this.x + this.radius + Math.cos(Math.PI);
-                const startY1 = this.y - this.radius + Math.sin(Math.PI);
-                const endX2 = this.x - this.radius + Math.cos(Math.PI);
-                const endY2 = this.y + this.radius + Math.sin(Math.PI);
+                const startX1 = this.radius + Math.cos(Math.PI);
+                const startY1 = -this.radius + Math.sin(Math.PI);
+                const endX2 = -this.radius + Math.cos(Math.PI);
+                const endY2 = this.radius + Math.sin(Math.PI);
 
                 // Draw the second diagonal line
                 ctx.moveTo(startX1, startY1);
@@ -75,16 +81,20 @@
 
                 ctx.stroke();
                 ctx.closePath();
+
+                // Restore the previous canvas state
+                ctx.restore();
             }
 
             move() 
             {
-                // Clear the canvas before each frame so that it makes the ball move around the screen
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Update the ball's position
+                // Update the ball's position and rotation
                 this.x += this.vx;
                 this.y += this.vy;
+                this.rotation += 0.02; // Adjust the rotation speed as needed
+
+                // Clear the canvas before each frame
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 // Draw the ball
                 this.draw();
@@ -114,13 +124,24 @@
                 this.width = width;
                 this.height = height;
                 this.color = color;
+                this.rotation = 0; // Initial rotation angle
             }
             
             // Method to draw the paddle on a canvas
             draw() 
             {
+                // Save the current canvas state
+                ctx.save();
+
+                // Translate and rotate the canvas
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
                 ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.fillRect(0, 0, this.width, this.height);
+
+                // Restore the previous canvas state
+                ctx.restore();
             }
 
         }
@@ -144,12 +165,12 @@
         // Get the animation going.
         repeatme();
 
-        //Key event listener to move the paddle
+        // Key event listener to move the paddle
         document.addEventListener("keydown", function (event) 
         {
             if (event.key === "ArrowUp") 
             {
-                paddle.y -= 15; //Adjust the speed upwards for the right paddle
+                paddle.y -= 15; // Adjust the speed upwards for the right paddle
             } 
             else if (event.key === "ArrowDown") 
             {
@@ -161,9 +182,8 @@
             } 
             else if (event.key === "s") 
             {
-                paddleLeft.y += 15; //Adjust the speed downwards for the left paddle
+                paddleLeft.y += 15; // Adjust the speed downwards for the left paddle
             }
-
         });
 
         // Mouse move event listener to move the paddles vertically based on mouse position
@@ -171,8 +191,6 @@
         { 
           var mouseY = event.clientY - canvas.offsetTop;
           paddleLeft.y = mouseY - paddleLeft.height/2;
-          noClicks += 1;
-          console.log(noClicks);
         });
 
     </script>
