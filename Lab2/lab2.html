@@ -86,14 +86,7 @@
             }
 
             move() {
-                // Update the ball's position and rotation
-                this.x += this.vx;
-                this.y += this.vy;
-                this.rotation += 0.02; // Adjust the rotation speed as needed
-
-                // Draw the ball
-                this.draw();
-
+                
                 // Check for collisions with the canvas boundaries
                 if (this.y + this.radius + 19 > canvas.height || this.y - this.radius - 19 < 0) {
                     // Reverse the vertical velocity when hitting top or bottom
@@ -104,6 +97,20 @@
                     // Reverse the horizontal velocity when hitting left or right
                     this.vx *= -1;
                 }
+
+                // Update the ball's position based on velocity
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Adjust the rotation
+                if (this.vx < 0 || this.vy < 0) {
+                    this.rotation -= 0.02;
+                } else {
+                    this.rotation += 0.02;
+                }
+                // Draw the ball
+                this.draw();
+
             }
         }
 
