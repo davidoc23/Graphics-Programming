@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>BouncingBallAnimation</title>
+    <style type="text/css">
+        body {
+            background-color: white;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>David O Connor</h1>
+    <canvas id="canvas-for-game"></canvas>
+
+    <script type="text/javascript">
+
+        // Gets a handle to the element with id canvas-for-game.
+        var canvas = document.getElementById("canvas-for-game");
+        // Get a 2D context for the canvas.
+        var ctx = canvas.getContext("2d");
+
+        // Set the canvas size
+        canvas.width = 600 // Adjust as needed
+        canvas.height = 500 // Adjust as needed
+
+        class Ball 
+        {
+            constructor(x, y, radius, vx, vy) 
+            {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.vx = vx;
+                this.vy = vy;
+                this.rotation = 0; // Initial rotation angle
+            }
+
+            draw() 
+            {
+                // Save the current canvas state
+                ctx.save();
+
+                // Translate and rotate the canvas
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
+                // Draw the prohibition symbol (circle with a diagonal line)
+                ctx.strokeStyle = 'red'; // You can change the color as needed
+                ctx.lineWidth = 15; // You can adjust the line width as needed
+
+                // Draw the circle
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius + 15, 0, Math.PI * 2);
+
+                // Calculate the coordinates for the diagonal line
+                const startX = this.radius + Math.cos(Math.PI);
+                const startY = this.radius + Math.sin(Math.PI);
+                const endX = -this.radius - Math.cos(Math.PI);
+                const endY = -this.radius - Math.sin(Math.PI);
+
+                // Draw the diagonal line
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+
+                // Calculate the coordinates for the start and end points of the line
+                const startX1 = this.radius + Math.cos(Math.PI);
+                const startY1 = -this.radius + Math.sin(Math.PI);
+                const endX2 = -this.radius + Math.cos(Math.PI);
+                const endY2 = this.radius + Math.sin(Math.PI);
+
+                // Draw the second diagonal line
+                ctx.moveTo(startX1, startY1);
+                ctx.lineTo(endX2, endY2);
+
+                ctx.stroke();
+                ctx.closePath();
+
+                // Restore the previous canvas state
+                ctx.restore();
+            }
+
+            move() 
+            {
+
+                // Clear the canvas before each frame
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+                // Check for collisions with the canvas boundaries
+                if (this.y + this.radius + 19 > canvas.height || this.y - this.radius - 19 < 0) 
+                {
+                    // Reverse the vertical velocity when hitting top or bottom
+                    this.vy *= -1;
+                }
+
+                if (this.x + this.radius + 19 > canvas.width || this.x - this.radius - 19 < 0) 
+                {
+                    // Reverse the horizontal velocity when hitting left or right
+                    this.vx *= -1;
+                }
+
+                // Update the ball's position based on velocity
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Adjust the rotation
+                if (this.vx < 0 || this.vy < 0) {
+                    this.rotation -= 0.02;
+                } else {
+                    this.rotation += 0.02;
+                }
+                // Draw the ball
+                this.draw();
+            }
+        }
+
+        class Paddle 
+        {
+            // Constructor method to initialize a Paddle object
+            constructor(x, y, width, height, color) 
+            {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.color = color;
+                this.rotation = 0; // Initial rotation angle
+            }
+            
+            // Method to draw the paddle on a canvas
+            draw() 
+            {
+                // Save the current canvas state
+                ctx.save();
+
+                // Translate and rotate the canvas
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
+                ctx.fillStyle = this.color;
+                ctx.fillRect(0, 0, this.width, this.height);
+
+                // Restore the previous canvas state
+                ctx.restore();
+            }
+
+        }
+
+        // Creates the ball object and sets the ball's radius, speed in the vertical and horizontal direction.
+        const ball = new Ball(canvas.width / 2, canvas.height / 2, 50, 1, 2);
+
+        // Creates the paddle object 
+        const paddle = new Paddle(canvas.width - 20, canvas.height / 2 - 40, 10, 120, 'blue');
+        const paddleLeft = new Paddle(10, canvas.height / 2 - 40, 10, 120, 'blue');
+
+        // A function to repeat every time the animation loops.
+        function repeatme() 
+        {
+            ball.move();
+            paddle.draw();
+            paddleLeft.draw();
+            window.requestAnimationFrame(repeatme);
+        }
+
+        // Get the animation going.
+        repeatme();
+
+        // Key event listener to move the paddle
+        document.addEventListener("keydown", function (event) 
+        {
+            if (event.key === "ArrowUp") 
+            {
+                paddle.y -= 15; // Adjust the speed upwards for the right paddle
+            } 
+            else if (event.key === "ArrowDown") 
+            {
+                paddle.y += 15; // Adjust the speed downwards for the right paddle
+            }
+            else if (event.key === "w") 
+            {
+                paddleLeft.y -= 15; // Adjust the speed upwards for the left paddle
+            } 
+            else if (event.key === "s") 
+            {
+                paddleLeft.y += 15; // Adjust the speed downwards for the left paddle
+            }
+        });
+
+        // Mouse move event listener to move the paddles vertically based on mouse position
+        canvas.addEventListener("mousemove", function(event) 
+        { 
+          var mouseY = event.clientY - canvas.offsetTop;
+          paddleLeft.y = mouseY - paddleLeft.height/2;
+        });
+
+    </script>
+</body>
+
+</html>
