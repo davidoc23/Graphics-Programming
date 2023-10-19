@@ -106,6 +106,15 @@
                     this.vx *= -1;
                 }
 
+                // Check for collisions with the paddles
+                if (
+                    (this.x + this.radius + 19 > canvas.width - 20 && this.x - this.radius < canvas.width - 20 && this.y >= paddle.y - this.radius && this.y <= paddle.y + paddle.height + this.radius) ||
+                    (this.x - this.radius - 19 < 10 && this.x + this.radius > 10 && this.y >= paddleLeft.y - this.radius && this.y <= paddleLeft.y + paddleLeft.height + this.radius)
+                ) 
+                {
+                    this.vx *= -1; // Reverse horizontal velocity to bounce off the paddle
+                }
+
                 // Update the ball's position based on velocity
                 this.x += this.vx;
                 this.y += this.vy;
@@ -157,7 +166,7 @@
         const ball = new Ball(canvas.width / 2, canvas.height / 2, 50, 1, 2);
 
         // Creates the paddle object 
-        const paddle = new Paddle(canvas.width - 20, canvas.height / 2 - 40, 10, 120, 'blue');
+        const paddle = new Paddle(canvas.width -20, canvas.height / 2 - 40, 10, 120, 'blue');
         const paddleLeft = new Paddle(10, canvas.height / 2 - 40, 10, 120, 'blue');
 
         // A function to repeat every time the animation loops.
