@@ -92,6 +92,8 @@
                 // Clear the canvas before each frame
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+                 // Apply gravity (downward acceleration)
+                 //this.vy += 0.1; // Adjust gravity as needed
 
                 // Check for collisions with the canvas boundaries
                 if (this.y + this.radius + 19 > canvas.height || this.y - this.radius - 19 < 0) 
@@ -111,10 +113,13 @@
                 this.y += this.vy;
 
                 // Adjust the rotation
-                if (this.vx < 0 || this.vy < 0) {
-                    this.rotation -= 0.02;
-                } else {
-                    this.rotation += 0.02;
+                if (this.vx < 0 || this.vy < 0) 
+                {
+                    this.rotation -= 0.03;
+                } 
+                else 
+                {
+                    this.rotation += 0.03;
                 }
                 // Draw the ball
                 this.draw();
