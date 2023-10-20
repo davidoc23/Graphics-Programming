@@ -113,6 +113,8 @@
                 ) 
                 {
                     this.vx *= -1; // Reverse horizontal velocity to bounce off the paddle
+                    ctx.font = "50px serif";
+                    ctx.fillText("Collision", canvas.height / 2, canvas.width / 2);
                 }
 
                 // Update the ball's position based on velocity
