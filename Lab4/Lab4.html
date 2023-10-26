@@ -182,11 +182,13 @@
                 // Check collision with right paddle
                 if 
                 (
-                    ball.x + ball.radius >= paddle.x - paddle.radius &&
-                    ball.y >= paddle.y - paddle.radius &&
-                    ball.y <= paddle.y + paddle.radius
+                    ball.x + ball.radius >= paddle.x - paddle.radius *2 &&
+                    ball.y >= paddle.y - paddle.radius*2 &&
+                    ball.y <= paddle.y + paddle.radius*2
                 ) 
                 {
+                    ball.vx *= -1; // Reverse the horizontal velocity
+                    ball.vy *= -1; // Reverse the vertical velocity
                     displayCollisionMessage("Collision with right paddle!");
                 }
                 
@@ -198,6 +200,8 @@
                     ball.y <= paddleLeft.y + paddleLeft.radius
                 ) 
                 {
+                    ball.vx *= -1; // Reverse the horizontal velocity
+                    ball.vy *= -1; // Reverse the vertical velocity
                     displayCollisionMessage("Collision with left paddle!");
                 }
             });
