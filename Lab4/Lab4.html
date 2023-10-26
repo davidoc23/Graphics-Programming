@@ -182,9 +182,9 @@
                 // Check collision with right paddle
                 if 
                 (
-                    ball.x + ball.radius >= paddle.x - paddle.radius *2 &&
-                    ball.y >= paddle.y - paddle.radius*2 &&
-                    ball.y <= paddle.y + paddle.radius*2
+                    ball.x + ball.radius >= paddle.x - paddle.radius-15 &&
+                    ball.y >= paddle.y - paddle.radius -15 &&
+                    ball.y <= paddle.y + paddle.radius -15
                 ) 
                 {
                     ball.vx *= -1; // Reverse the horizontal velocity
@@ -195,9 +195,9 @@
                 // Check collision with left paddle
                 if 
                 (
-                    ball.x - ball.radius <= paddleLeft.x + paddleLeft.radius &&
-                    ball.y >= paddleLeft.y - paddleLeft.radius &&
-                    ball.y <= paddleLeft.y + paddleLeft.radius
+                    ball.x - ball.radius <= paddleLeft.x + paddleLeft.radius +15 &&
+                    ball.y >= paddleLeft.y - paddleLeft.radius +15 &&
+                    ball.y <= paddleLeft.y + paddleLeft.radius +15
                 ) 
                 {
                     ball.vx *= -1; // Reverse the horizontal velocity
