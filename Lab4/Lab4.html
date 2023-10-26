@@ -20,19 +20,18 @@
     <canvas id="canvas-for-game"></canvas>
 
     <script type="text/javascript">
-
         // Gets a handle to the element with id canvas-for-game.
         var canvas = document.getElementById("canvas-for-game");
         // Get a 2D context for the canvas.
         var ctx = canvas.getContext("2d");
 
         // Set the canvas size
-        canvas.width = 600 // Adjust as needed
-        canvas.height = 500 // Adjust as needed
+        canvas.width = 600; // Adjust as needed
+        canvas.height = 500; // Adjust as needed
 
         class Ball 
         {
-            constructor(x, y, radius, vx, vy) 
+            constructor(x, y, radius, vx, vy, color) 
             {
                 this.x = x;
                 this.y = y;
@@ -40,6 +39,9 @@
                 this.vx = vx;
                 this.vy = vy;
                 this.rotation = 0; // Initial rotation angle
+                this.rotationSpeed = 0.02; // Initial rotation speed for circle
+                this.color = color; 
+                this.gravity = 0.1; 
             }
 
             draw() 
@@ -52,7 +54,7 @@
                 ctx.rotate(this.rotation);
 
                 // Draw the prohibition symbol (circle with a diagonal line)
-                ctx.strokeStyle = 'red'; // You can change the color as needed
+                ctx.strokeStyle = this.color; // You can change the color as needed
                 ctx.lineWidth = 15; // You can adjust the line width as needed
 
                 // Draw the circle
@@ -88,10 +90,8 @@
 
             move() 
             {
-
-                // Clear the canvas before each frame
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+                // Apply a downward acceleration to the balls
+                this.vy += this.gravity;
 
                 // Check for collisions with the canvas boundaries
                 if (this.y + this.radius + 19 > canvas.height || this.y - this.radius - 19 < 0) 
@@ -106,27 +106,20 @@
                     this.vx *= -1;
                 }
 
-                // Check for collisions with the paddles
-                if (
-                    (this.x + this.radius + 19 > canvas.width - 10 && this.x - this.radius < canvas.width - 10 && this.y >= paddle.y - this.radius && this.y <= paddle.y + paddle.height + this.radius) ||
-                    (this.x - this.radius - 19 < 10 && this.x + this.radius > 10 && this.y >= paddleLeft.y - this.radius && this.y <= paddleLeft.y + paddleLeft.height + this.radius)
-                ) 
-                {
-                    this.vx *= -1; // Reverse horizontal velocity to bounce off the paddle
-                    ctx.font = "50px serif", 0.75;
-                    ctx.fillText("Collision", canvas.height / 2, canvas.width / 2);
-                }
-
                 // Update the ball's position based on velocity
                 this.x += this.vx;
                 this.y += this.vy;
 
                 // Adjust the rotation
-                if (this.vx < 0 || this.vy < 0) {
-                    this.rotation -= 0.02;
-                } else {
-                    this.rotation += 0.02;
+                if (this.vx < 0 || this.vy < 0) 
+                {
+                    this.rotation -= this.rotationSpeed;
+                } 
+                else 
+                {
+                    this.rotation += this.rotationSpeed;
                 }
+
                 // Draw the ball
                 this.draw();
             }
@@ -135,55 +128,120 @@
         class Paddle 
         {
             // Constructor method to initialize a Paddle object
-            constructor(x, y, width, height, color) 
+            constructor(x, y, radius, vx, vy) 
             {
                 this.x = x;
                 this.y = y;
-                this.width = width;
-                this.height = height;
-                this.color = color;
-                this.rotation = 0; // Initial rotation angle
+                this.radius = radius;
+                this.color = 'blue';
+                this.height = 80; // Added height property for collision detection
             }
-            
+
             // Method to draw the paddle on a canvas
             draw() 
             {
                 // Save the current canvas state
                 ctx.save();
 
-                // Translate and rotate the canvas
+                ctx.beginPath();
+
+                // Translate
                 ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
+
+                // Start drawing the circle
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
 
                 ctx.fillStyle = this.color;
-                ctx.fillRect(0, 0, this.width, this.height);
+
+                ctx.fill();
 
                 // Restore the previous canvas state
                 ctx.restore();
             }
-
         }
 
-        // Creates the ball object and sets the ball's radius, speed in the vertical and horizontal direction.
-        const ball = new Ball(canvas.width / 2, canvas.height / 2, 50, 1, 2);
+        // Create an array to hold multiple balls
+        const balls =
+        [   // Create an array to store multiple Ball objects
+            new Ball(canvas.width / 2, canvas.height / 2, 50, 1, 2, 'pink'), // Create the first Ball at the center of the canvas with specified properties
+            new Ball(canvas.width / 3, canvas.height / 3, 30, 0.8, -1,'red'), // Create the second Ball at one-third the canvas width and height with different properties
+            new Ball(canvas.width / 4, canvas.height / 4, 20, -0.5, 1, 'yellow') // Create the third Ball at one-fourth the canvas width and height with different properties
+        ];
 
-        // Creates the paddle object 
-        const paddle = new Paddle(canvas.width - 10, canvas.height / 2 - 40, 10, 120, 'blue');
-        const paddleLeft = new Paddle(0, canvas.height / 2 - 40, 10, 120, 'blue');
+
+        // Creates the paddle object
+        const paddle = new Paddle(canvas.width - 25, canvas.height / 2 - 40, 25, 1, 2);
+        const paddleLeft = new Paddle(25, canvas.height / 2 - 40, 25, 1, 2);
+
+        // Function to detect collisions between the balls and the paddles
+        function detectCollisions() 
+        {
+            balls.forEach(ball => 
+            {
+                // Check collision with right paddle
+                if 
+                (
+                    ball.x + ball.radius >= paddle.x - paddle.radius &&
+                    ball.y >= paddle.y - paddle.radius &&
+                    ball.y <= paddle.y + paddle.radius
+                ) 
+                {
+                    displayCollisionMessage("Collision with right paddle!");
+                }
+                
+                // Check collision with left paddle
+                if 
+                (
+                    ball.x - ball.radius <= paddleLeft.x + paddleLeft.radius &&
+                    ball.y >= paddleLeft.y - paddleLeft.radius &&
+                    ball.y <= paddleLeft.y + paddleLeft.radius
+                ) 
+                {
+                    displayCollisionMessage("Collision with left paddle!");
+                }
+            });
+        }
+
+        // Function to display a collision message on the canvas
+        function displayCollisionMessage(message) 
+        {
+            ctx.fillStyle = "red";
+            ctx.font = "20px Arial";
+            ctx.fillText(message, canvas.width / 2 - 100, canvas.height / 2);
+
+            setTimeout(function () 
+            {
+                ctx.clearRect(canvas.width / 2 - 100, canvas.height / 2 - 25, 200, 50);
+            }, 750); // Clear the message after 0.75 seconds
+        }
 
         // A function to repeat every time the animation loops.
         function repeatme() 
         {
-            ball.move();
+            // Clear the canvas before each frame
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Detect and handle collisions
+            detectCollisions();
+
+            // Move and draw each ball
+            balls.forEach(ball => {
+                ball.move();
+            });
+
+            // Draw the paddles
             paddle.draw();
             paddleLeft.draw();
+
+            // Request the next frame
             window.requestAnimationFrame(repeatme);
         }
 
         // Get the animation going.
         repeatme();
 
-        // Key event listener to move the paddle
+        // Key event listener to move the paddle and control ball speed
         document.addEventListener("keydown", function (event) 
         {
             if (event.key === "ArrowUp") 
@@ -193,7 +251,7 @@
             else if (event.key === "ArrowDown") 
             {
                 paddle.y += 15; // Adjust the speed downwards for the right paddle
-            }
+            } 
             else if (event.key === "w") 
             {
                 paddleLeft.y -= 15; // Adjust the speed upwards for the left paddle
@@ -201,14 +259,45 @@
             else if (event.key === "s") 
             {
                 paddleLeft.y += 15; // Adjust the speed downwards for the left paddle
+            } 
+            else if (event.key === "q") 
+            {   // Increase ball speed
+                balls.forEach(ball => 
+                {
+                    ball.vx *= 1.2; // You can adjust the speed increase factor
+                    ball.vy *= 1.2;
+                });
+            } 
+            else if (event.key === "r") 
+            {   // Decrease ball speed
+                balls.forEach(ball => 
+                {
+                    ball.vx *= 0.2; // You can adjust the speed decrease factor
+                    ball.vy *= 0.2;
+                });
+            } 
+            else if (event.key === "a") 
+            {   // Increase rotation speed
+                balls.forEach(ball => 
+                {
+                    ball.rotationSpeed += 0.01; // Adjust
+                    ball.rotationSpeed += 0.01; // Adjust the rotation speed increase factor
+                });
+            } 
+            else if (event.key === "d") 
+            {   // Decrease rotation speed
+                balls.forEach(ball => 
+                {
+                    ball.rotationSpeed -= 0.01; // Adjust the rotation speed decrease factor
+                });
             }
         });
 
         // Mouse move event listener to move the paddles vertically based on mouse position
         canvas.addEventListener("mousemove", function(event) 
-        { 
-          var mouseY = event.clientY - canvas.offsetTop;
-          paddleLeft.y = mouseY - paddleLeft.height/2;
+        {
+            var mouseY = event.clientY - canvas.offsetTop;
+            paddleLeft.y = mouseY - paddleLeft.radius / 2; // Subtract the radius to correctly position the paddle
         });
 
     </script>
