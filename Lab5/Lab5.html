@@ -25,9 +25,14 @@
 
         //Create a tetrahedron and add it to the scene
         const geometry = new THREE.TetrahedronGeometry(5,0);
-        const material = new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true});
+        const material = new THREE.MeshBasicMaterial({color: 0xffff00});
         const tetrahedron = new THREE.Mesh(geometry,material);
         scene.add(tetrahedron);
+
+        // Add a spot light.
+        const spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(1, 0.5, 1);
+        scene.add(spotLight);
 
         //Repeat Me
         function repeatme()
