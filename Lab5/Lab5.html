@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.157.0/three.js" 
-            integrity="sha512-8DQ21zI0ic9mMNCPYj225sCbU8LGPu/T7u97ix4/P+WqAJIIuuG6w/fPoOFC6LfZGqUE85etxR4W0ia2IyRFiw==" 
+            integrity="sha512-8DQ21zI0ic9mMNCPYj225sCbU8LGPu/T7u97ix4/P+WqAJIIuuG6w/fPoOFC6LfZGqUE85etxR4W0ia2IyRFiw" 
             crossorigin="anonymous" referrerpolicy="no-referrer">
     </script>
    
@@ -14,82 +14,96 @@
 
  <body>
     <script type="text/javascript">
-
-      // Define a Tetrahedron class
-      class Tetrahedron 
-      {
-         constructor() 
-         {
-            // Create the tetrahedron geometry and material
-            const geometry = new THREE.TetrahedronGeometry(5, 0);
-            const material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
-           
-             // Create the mesh (the tetrahedron itself)
-            this.mesh = new THREE.Mesh(geometry, material);
-            
-            // Set the initial position of the tetrahedron
-            this.mesh.position.x = -5;
-            this.mesh.position.z = 0;
-            
-            // Set the rotation speed for the tetrahedron
-            this.rotationSpeed = 0.01;
-         }
-
-         // Update method to handle rotation and movement
-         update() 
-         {
-            // Rotate the tetrahedron
-            this.mesh.rotation.x += this.rotationSpeed;
-            this.mesh.rotation.y += this.rotationSpeed;
-
-            // Move the tetrahedron from left to right
-            this.mesh.position.x += 0.05;
-
-            // Wrap the tetrahedron if it goes beyond the canvas
-            if (this.mesh.position.x > 5) 
+        
+        // Define a Tetrahedron class
+        class Tetrahedron 
+        {
+            constructor() 
             {
-               this.mesh.position.x = -5;
-            }
-         }
-      }
+                // Create the tetrahedron geometry and material
+                const geometry = new THREE.TetrahedronGeometry(5, 0);
+                const material = new THREE.MeshLambertMaterial({ color: 0xffff00, wireframe: false });
 
-        //Implementing a scene, camera and render.
+                // Create the mesh (the tetrahedron itself)
+                this.mesh = new THREE.Mesh(geometry, material);
+
+                // Set the initial position of the tetrahedron
+                this.mesh.position.x = -5;
+                this.mesh.position.z = 0;
+
+                // Set the rotation speed for the tetrahedron
+                this.rotationSpeed = 0.01;
+            }
+
+            // Update method to handle rotation and movement
+            update() 
+            {
+               // Rotate the tetrahedron
+               this.mesh.rotation.x += this.rotationSpeed;
+               this.mesh.rotation.y += this.rotationSpeed;
+
+               // Move the tetrahedron from left to right
+               this.mesh.position.x += 0.05;
+
+                // Wrap the tetrahedron if it goes beyond the canvas
+               if (this.mesh.position.x > 5) 
+               {
+                  this.mesh.position.x = -5;
+               }
+
+               // Change the color of the tetrahedron
+               this.mesh.material.color.set(getRandomColor());
+            }
+        }
+
+        // Function to generate a random color
+        function getRandomColor() {
+            const color = new THREE.Color();
+            color.setHex(Math.random() * 0xffffff);
+            return color;
+        }
+
+        // Implementing a scene, camera and renderer.
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-        camera.position.z = 10;
+        camera.position.z = 80;
 
-        //Create a tetrahedron and add it to the scene
-        const geometry = new THREE.TetrahedronGeometry(5,0);
-        const material = new THREE.MeshBasicMaterial({color: 0xffff00});
-        const tetrahedron = new THREE.Mesh(geometry,material);
-        scene.add(tetrahedron);
+        // Create a Tetrahedron object and add it to the scene.
+        const tetrahedron = new Tetrahedron();
+        scene.add(tetrahedron.mesh);
 
         // Add a spot light.
-        const spotLight = new THREE.SpotLight(0xffffff);
+        var spotLight = new THREE.SpotLight(0xffffff);
         spotLight.position.set(1, 0.5, 1);
+        spotLight.castShadow = true; // Enable casting shadows
         scene.add(spotLight);
 
-        //Repeat Me
-        function repeatme()
+        // Add a plane to receive the shadow
+        const planeGeometry = new THREE.PlaneGeometry(50, 50, 32);
+        const planeMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.receiveShadow = true;
+        plane.rotation.x = -Math.PI / 2; // Rotate the plane to be horizontal
+        scene.add(plane);
+
+        // Create a camera helper to visualize the light source
+        const cameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+        scene.add(cameraHelper);
+
+        // Set up shadow properties for the light
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+
+        // Repeat Me
+        function repeatme() 
         {
-         renderer.render(scene,camera);
-
-         //Rotate the Tetrahedron
-         tetrahedron.rotation.x += 0.01;
-         tetrahedron.rotation.y += 0.01;
-
-         // Move the Tetrahedron from left to right
-         tetrahedron.position.x += 0.05;
-         if (tetrahedron.position.x > 5) 
-         {
-            tetrahedron.position.x = -5;
-         }
-
-         requestAnimationFrame(repeatme);
+            renderer.render(scene, camera);
+            tetrahedron.update();
+            requestAnimationFrame(repeatme);
         }
         repeatme();
     </script>
