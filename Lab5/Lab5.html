@@ -16,19 +16,31 @@
     <script type="text/javascript">
         //Implementing a scene, camera and render.
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth, window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        const render = new THREE.WebGlRenderer();
-        renderer.setSize(window.innerHeight, window.innerWidth);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+        camera.position.z = 10;
 
         //Create a tetrahedron and add it to the scene
-        const geometry = new THREE.TetrahedronGeometry(5,0); // Radius, Detail
-        const material = new THREE.MeshBasicMaterial({color: 0xffff00});
-        const tetrahedron = new THREE.Mesh(geometry, material);
+        const geometry = new THREE.TetrahedronGeometry(5,0);
+        const material = new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true});
+        const tetrahedron = new THREE.Mesh(geometry,material);
         scene.add(tetrahedron);
 
-        
+        //Repeat Me
+        function repeatme()
+        {
+         renderer.render(scene,camera);
+
+         //Rotate the Tetrahedron
+         tetrahedron.rotation.x += 0.01;
+         tetrahedron.rotation.y += 0.01;
+
+         requestAnimationFrame(repeatme);
+        }
+        repeatme();
     </script>
  </body>
 </html>
