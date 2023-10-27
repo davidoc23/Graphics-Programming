@@ -40,6 +40,10 @@
                // Set the initial velocity and direction for left-to-right movement
                this.velocity = 0.10; // Initial velocity
                this.direction = 1; // 1 for right, -1 for left
+
+               // Change the color of the tetrahedron
+               this.mesh.material.color.set(getRandomColor());
+
                scene.add(this.mesh);
             }
 
@@ -60,6 +64,14 @@
                }
                
             }
+        }
+
+        // Function to generate a random color
+        function getRandomColor() 
+        {
+            const color = new THREE.Color();
+            color.setHex(Math.random() * 0xffffff);
+            return color;
         }
 
         // Implementing a scene, camera and renderer.
