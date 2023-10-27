@@ -1,122 +1,137 @@
 <!DOCTYPE html>
 <html>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.157.0/three.js" 
-            integrity="sha512-8DQ21zI0ic9mMNCPYj225sCbU8LGPu/T7u97ix4/P+WqAJIIuuG6w/fPoOFC6LfZGqUE85etxR4W0ia2IyRFiw" 
-            crossorigin="anonymous" referrerpolicy="no-referrer">
-    </script>
-   
- <head>
-    <meta charset="UTF-8">
-    <title>3D</title>
-    <style type="text/css">
-    </style>
- </head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.157.0/three.js"
+   integrity="sha512-8DQ21zI0ic9mMNCPYj225sCbU8LGPu/T7u97ix4/P+WqAJIIuuG6w/fPoOFC6LfZGqUE85etxR4W0ia2IyRFiw"
+   crossorigin="anonymous" referrerpolicy="no-referrer">
+   </script>
 
- <body>
-    <script type="text/javascript">
-        
-        // Define a Tetrahedron class
-        class Tetrahedron 
-        {
-            constructor() 
+<head>
+   <meta charset="UTF-8">
+   <title>3D</title>
+   <style type="text/css">
+   </style>
+</head>
+
+<body>
+   <script type="text/javascript">
+
+      // Define a Tetrahedron class
+      class Tetrahedron 
+      {
+         constructor() 
+         {
+            // Create the tetrahedron geometry and material
+            const geometry = new THREE.TetrahedronGeometry(5, 0);
+            const material = new THREE.MeshLambertMaterial({ color: 0xffff00, wireframe: false });
+
+            // Create the mesh (the tetrahedron itself)
+            this.mesh = new THREE.Mesh(geometry, material);
+
+            // Create a wireframe for the tetrahedron
+            const wireframeGeometry = new THREE.EdgesGeometry(geometry);
+            const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+            this.wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+            this.mesh.add(this.wireframe); // Add wireframe as a child
+
+            // Set the initial position of the tetrahedron
+            this.mesh.position.x = -5;
+            this.mesh.position.z = 0;
+
+            // Set the rotation speed for the tetrahedron
+            this.rotationSpeed = 0.05;
+
+            // Set the initial velocity and direction for left-to-right movement
+            this.velocity = 0.10; // Initial velocity
+            this.direction = 1; // 1 for right, -1 for left
+
+            // Change the color of the tetrahedron
+            this.mesh.material.color.set(getRandomColor());
+
+            scene.add(this.mesh);
+         }
+
+         // Update method to handle rotation and movement
+         update() 
+         {
+            // Rotate the tetrahedron
+            this.mesh.rotation.x += this.rotationSpeed;
+            this.mesh.rotation.y += this.rotationSpeed;
+
+            // Move the tetrahedron from left to right
+            this.mesh.position.x += this.velocity * this.direction;
+
+            // Reverse the direction when the tetrahedron reaches the canvas boundaries
+            if (this.mesh.position.x > 25 || this.mesh.position.x < -25) 
             {
-               // Create the tetrahedron geometry and material
-               const geometry = new THREE.TetrahedronGeometry(5, 0);
-               const material = new THREE.MeshLambertMaterial({ color: 0xffff00, wireframe: false });
-                
-               // Create the mesh (the tetrahedron itself)
-               this.mesh = new THREE.Mesh(geometry, material);
-
-               this.mesh.castShadow = true; // Enable casting shadows
-               this.mesh.receiveShadow = true; // Enable receiving shadows
-
-               // Set the initial position of the tetrahedron
-               this.mesh.position.x = -5;
-               this.mesh.position.z = 0;
-
-               // Set the rotation speed for the tetrahedron
-               this.rotationSpeed = 0.05;
-
-               // Set the initial velocity and direction for left-to-right movement
-               this.velocity = 0.10; // Initial velocity
-               this.direction = 1; // 1 for right, -1 for left
-
-               // Change the color of the tetrahedron
-               this.mesh.material.color.set(getRandomColor());
-
-               scene.add(this.mesh);
+               this.direction *= -1;
             }
 
-            // Update method to handle rotation and movement
-            update() 
-            {
-               // Rotate the tetrahedron
-               this.mesh.rotation.x += this.rotationSpeed;
-               this.mesh.rotation.y += this.rotationSpeed;
+         }
+      }
 
-               // Move the tetrahedron from left to right
-               this.mesh.position.x += this.velocity * this.direction;
+      // Function to generate a random color
+      function getRandomColor() 
+      {
+         const color = new THREE.Color();
+         color.setHex(Math.random() * 0xffffff);
+         return color;
+      }
 
-               // Reverse the direction when the tetrahedron reaches the canvas boundaries
-               if (this.mesh.position.x > 10 || this.mesh.position.x < -10) 
-               {
-                     this.direction *= -1;
-               }
-               
-            }
-        }
+      // Implementing a scene, camera and renderer.
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        // Function to generate a random color
-        function getRandomColor() 
-        {
-            const color = new THREE.Color();
-            color.setHex(Math.random() * 0xffffff);
-            return color;
-        }
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      camera.position.z = 100;
 
-        // Implementing a scene, camera and renderer.
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      // Set the background color
+      const backgroundColor = new THREE.Color(0x87CEEB); // This is a light blue color
+      renderer.setClearColor(backgroundColor, 1); // The second argument (1) is the opacity (1 is fully opaque)
 
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-        camera.position.z = 80;
+      // Create a Tetrahedron object 
+      const tetrahedron = new Tetrahedron();
+      
+      //Create a Cube Object
+      const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+      const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x00ff00, transparent: true, opacity: 0.8 });
+      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      cube.castShadow = true;
+      cube.receiveShadow = true;
+      scene.add(cube);
 
-        // Create a Tetrahedron object 
-        const tetrahedron = new Tetrahedron();
+      // Add a spot light.
+      var spotLight = new THREE.SpotLight(0xffffff);
+      spotLight.position.set(0, 10, 10);
+      spotLight.intensity = 50;
+      spotLight.castShadow = true; // Enable casting shadows
+      scene.add(spotLight);
 
-        // Add a spot light.
-        var spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position.set(0, 10, 10);
-        spotLight.intensity = 50;
-        spotLight.castShadow = true; // Enable casting shadows
-        scene.add(spotLight);
+      // Add a plane to receive the shadow
+      const planeGeometry = new THREE.PlaneGeometry(50, 50, 32);
+      const planeMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
+      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      plane.receiveShadow = true;
+      plane.rotation.x = -Math.PI / 2; // Rotate the plane to be horizontal
+      scene.add(plane);
 
-        // Add a plane to receive the shadow
-        const planeGeometry = new THREE.PlaneGeometry(50, 50, 32);
-        const planeMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
-        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.receiveShadow = true;
-        plane.rotation.x = -Math.PI / 2; // Rotate the plane to be horizontal
-        scene.add(plane);
+      // Create a camera helper to visualize the light source
+      const cameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+      //scene.add(cameraHelper);
 
-        // Create a camera helper to visualize the light source
-        const cameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-        //scene.add(cameraHelper);
+      // Set up shadow properties for the light
+      spotLight.shadow.mapSize.width = 1024;
+      spotLight.shadow.mapSize.height = 1024;
 
-        // Set up shadow properties for the light
-        spotLight.shadow.mapSize.width = 1024;
-        spotLight.shadow.mapSize.height = 1024;
-
-        // Repeat Me
-        function repeatme() 
-        {
-            renderer.render(scene, camera);
-            tetrahedron.update();
-            requestAnimationFrame(repeatme);
-        }
-        repeatme();
-    </script>
- </body>
+      // Repeat Me
+      function repeatme() 
+      {
+         renderer.render(scene, camera);
+         tetrahedron.update();
+         requestAnimationFrame(repeatme);
+      }
+      repeatme();
+   </script>
+</body>
 </html>
