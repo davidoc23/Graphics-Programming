@@ -23,6 +23,11 @@
         document.body.appendChild(renderer.domElement);
 
         //Create a tetrahedron and add it to the scene
+        const geometry = new THREE.TetrahedronGeometry(5,0); // Radius, Detail
+        const material = new THREE.MeshBasicMaterial({color: 0xffff00});
+        const tetrahedron = new THREE.Mesh(geometry, material);
+        scene.add(tetrahedron);
+
         
     </script>
  </body>
