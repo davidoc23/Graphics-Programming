@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.157.0/three.js" 
+            integrity="sha512-8DQ21zI0ic9mMNCPYj225sCbU8LGPu/T7u97ix4/P+WqAJIIuuG6w/fPoOFC6LfZGqUE85etxR4W0ia2IyRFiw==" 
+            crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+   
+ <head>
+    <meta charset="UTF-8">
+    <title>3D</title>
+    <style type="text/css">
+    </style>
+ </head>
+
+ <body>
+    <script type="text/javascript">
+        //Implementing a scene, camera and render.
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth, window.innerHeight, 0.1, 1000);
+
+        const render = new THREE.WebGlRenderer();
+        renderer.setSize(window.innerHeight, window.innerWidth);
+        document.body.appendChild(renderer.domElement);
+
+        //Create a tetrahedron and add it to the scene
+        
+    </script>
+ </body>
+</html>
