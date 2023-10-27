@@ -20,19 +20,27 @@
         {
             constructor() 
             {
-                // Create the tetrahedron geometry and material
-                const geometry = new THREE.TetrahedronGeometry(5, 0);
-                const material = new THREE.MeshLambertMaterial({ color: 0xffff00, wireframe: false });
+               // Create the tetrahedron geometry and material
+               const geometry = new THREE.TetrahedronGeometry(5, 0);
+               const material = new THREE.MeshLambertMaterial({ color: 0xffff00, wireframe: false });
+                
+               // Create the mesh (the tetrahedron itself)
+               this.mesh = new THREE.Mesh(geometry, material);
 
-                // Create the mesh (the tetrahedron itself)
-                this.mesh = new THREE.Mesh(geometry, material);
+               this.mesh.castShadow = true; // Enable casting shadows
+               this.mesh.receiveShadow = true; // Enable receiving shadows
 
-                // Set the initial position of the tetrahedron
-                this.mesh.position.x = -5;
-                this.mesh.position.z = 0;
+               // Set the initial position of the tetrahedron
+               this.mesh.position.x = -5;
+               this.mesh.position.z = 0;
 
-                // Set the rotation speed for the tetrahedron
-                this.rotationSpeed = 0.01;
+               // Set the rotation speed for the tetrahedron
+               this.rotationSpeed = 0.05;
+
+               // Set the initial velocity and direction for left-to-right movement
+               this.velocity = 0.10; // Initial velocity
+               this.direction = 1; // 1 for right, -1 for left
+               scene.add(this.mesh);
             }
 
             // Update method to handle rotation and movement
@@ -43,24 +51,15 @@
                this.mesh.rotation.y += this.rotationSpeed;
 
                // Move the tetrahedron from left to right
-               this.mesh.position.x += 0.05;
+               this.mesh.position.x += this.velocity * this.direction;
 
-                // Wrap the tetrahedron if it goes beyond the canvas
-               if (this.mesh.position.x > 5) 
+               // Reverse the direction when the tetrahedron reaches the canvas boundaries
+               if (this.mesh.position.x > 10 || this.mesh.position.x < -10) 
                {
-                  this.mesh.position.x = -5;
+                     this.direction *= -1;
                }
-
-               // Change the color of the tetrahedron
-               this.mesh.material.color.set(getRandomColor());
+               
             }
-        }
-
-        // Function to generate a random color
-        function getRandomColor() {
-            const color = new THREE.Color();
-            color.setHex(Math.random() * 0xffffff);
-            return color;
         }
 
         // Implementing a scene, camera and renderer.
@@ -72,13 +71,13 @@
         document.body.appendChild(renderer.domElement);
         camera.position.z = 80;
 
-        // Create a Tetrahedron object and add it to the scene.
+        // Create a Tetrahedron object 
         const tetrahedron = new Tetrahedron();
-        scene.add(tetrahedron.mesh);
 
         // Add a spot light.
         var spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position.set(1, 0.5, 1);
+        spotLight.position.set(0, 10, 10);
+        spotLight.intensity = 50;
         spotLight.castShadow = true; // Enable casting shadows
         scene.add(spotLight);
 
@@ -92,7 +91,7 @@
 
         // Create a camera helper to visualize the light source
         const cameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-        scene.add(cameraHelper);
+        //scene.add(cameraHelper);
 
         // Set up shadow properties for the light
         spotLight.shadow.mapSize.width = 1024;
