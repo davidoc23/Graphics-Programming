@@ -43,6 +43,13 @@
          tetrahedron.rotation.x += 0.01;
          tetrahedron.rotation.y += 0.01;
 
+         // Move the Tetrahedron from left to right
+         tetrahedron.position.x += 0.05;
+         if (tetrahedron.position.x > 5) 
+         {
+            tetrahedron.position.x = -5;
+         }
+
          requestAnimationFrame(repeatme);
         }
         repeatme();
