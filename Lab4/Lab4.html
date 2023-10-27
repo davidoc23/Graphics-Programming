@@ -41,7 +41,7 @@
                 this.rotation = 0; // Initial rotation angle
                 this.rotationSpeed = 0.02; // Initial rotation speed for circle
                 this.color = color; 
-                //this.gravity = 0.1; 
+                this.gravity = 0.1; 
             }
 
             draw() 
@@ -91,7 +91,7 @@
             move() 
             {
                 // Apply a downward acceleration to the balls
-                //this.vy += this.gravity;
+                this.vy += this.gravity;
 
                 // Check for collisions with the canvas boundaries
                 if (this.y + this.radius + 19 > canvas.height || this.y - this.radius - 19 < 0) 
