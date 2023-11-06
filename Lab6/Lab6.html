@@ -4,9 +4,9 @@
     <title>D3.js Lab</title>
     <meta charset="UTF-8">
     <style type="text/css"></style>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
  </head>
  <body>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script type="text/javascript">
     
     //Get the JSON Data
@@ -19,16 +19,17 @@
     //Executed once file has been downloaded
     function plotCO2Data(data)
     {
+        //Setup SVG size and margins
         var margin = {top: 50 , right: 50 , bottom: 50 , left: 50 },
         width = 900 - margin.left - margin.right,
         height = 670 - margin.top - margin.bottom;
 
         //Creating the x and y scales for interpolated C02 Value
-        var y = d3.scaleLiner()
+        var y = d3.scaleLinear()
                 .domain(d3.extent(data, function (d) {return d["Interpolated"] }))
                 .range([height, 0]);
 
-        var parseDate = d3.timeParse('%Y-%m-%d');
+        var parseDate = d3.timeParse("%Y-%m-%d");
 
         var x = d3.scaleTime()
                 .domain(d3.extent(data, function (d) {return parseDate( d["Date"]); }))
@@ -48,24 +49,23 @@
                         .x(function (d) {return x(parseDate(d["Date"])); }) //x pixel
                         .y(function (d) {return y(d["Interpolated"]); }); //y pixel
 
-        
-        var svg = d3.select('body')
+        var svg = d3.select("body")
                     .append("svg")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
                     .append("g")
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         
         svg.append("g") //Append to a <g> - group element
-            .attr('class', 'x-axis')
+            .attr("class", "x axis")
             .call(xAxis);
         
         svg.append("g") //Append to a <g> - group element
-            .attr('class', 'y-axis')
+            .attr("class", "y axis")
             .call(yAxis);
 
         svg.append("path") //Add the valueline path
-            .attr("g", valueline(data));
+            .attr("d", valueline(data));
     }
     </script>
     
