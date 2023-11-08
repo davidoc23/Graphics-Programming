@@ -69,13 +69,13 @@
             this.mesh.position.y += this.verticalVelocity * this.verticalDirection;
 
             // Reverse the direction when the tetrahedron reaches the canvas boundaries
-            if (this.mesh.position.x > 25 || this.mesh.position.x < -25) 
+            if (this.mesh.position.x > 15 || this.mesh.position.x < -15) 
             {
                this.direction *= -1;
             }
 
             // Reverse the vertical direction when the tetrahedron reaches the canvas boundaries
-            if (this.mesh.position.y > 25 || this.mesh.position.y < -25) 
+            if (this.mesh.position.y > 15 || this.mesh.position.y < -15) 
             {
                   this.verticalDirection *= -1;
             }
@@ -117,8 +117,11 @@
 
       // Add a spot light.
       var spotLight = new THREE.SpotLight(0xffffff);
-      spotLight.position.set(0, 10, 15);
+      spotLight.position.set(0, 15, 15);
       spotLight.intensity = 50;
+      spotLight.distance = 50; // Increase the distance (adjust as needed)
+      spotLight.penumbra = 0.2; // Increase the penumbra (adjust as needed)
+      spotLight.angle = Math.PI / 4; // Increase the angle (adjust as needed, this is in radians)
       spotLight.castShadow = true; // Enable casting shadows
       scene.add(spotLight);
 
