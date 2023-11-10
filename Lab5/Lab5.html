@@ -38,6 +38,12 @@
             this.mesh.position.z = 0;
             this.mesh.position.y = 0;
 
+            // Set the initial RGB values
+            this.r = 0.0; // Initial red value
+            this.g = 0.5; // Initial green value
+            this.b = 0.5; // Initial blue value
+            this.colorChangeSpeed = 0.002; // Adjust the speed of color change
+
             // Set the rotation speed for the tetrahedron
             this.rotationSpeed = 0.02;
 
@@ -49,15 +55,37 @@
             this.verticalVelocity = 0.05; // Initial vertical velocity
             this.verticalDirection = 1; // 1 for up, -1 for down
 
-            // Change the color of the tetrahedron
-            this.mesh.material.color.set(getRandomColor());
-
             scene.add(this.mesh);
          }
 
          // Update method to handle rotation and movement
          update() 
          {
+            //Update the colour change
+            this.r = this.r+this.colorChangeSpeed;
+            this.g = this.g+this.colorChangeSpeed;
+            this.b = this.b+this.colorChangeSpeed;
+
+            //If the rgb values reaches 1.0 then reset to 0.0
+            if(this.r>= 1.0)
+            {
+               this.r = 0.0;
+            }
+            if(this.g>= 1.0)
+            {
+               this.g = 0.0;
+            }
+            if(this.b >=1.0)
+            {
+               this.b = 0.0;
+            }
+
+            //DEBUG
+            console.log(this.r);
+
+            // Set the color to the tetrahedron
+            this.mesh.material.color.setRGB(this.r, this.g, this.b);
+
             // Rotate the tetrahedron
             this.mesh.rotation.x += this.rotationSpeed;
             this.mesh.rotation.y += this.rotationSpeed;
@@ -81,15 +109,19 @@
             }
 
          }
+
+         // Function to generate a random color
+         getRandomColor() 
+         {
+            // Generate random RGB values
+            //this.r = Math.random();
+           // this.g = Math.random();
+           // this.b = Math.random();
+         }
+
       }
 
-      // Function to generate a random color
-      function getRandomColor() 
-      {
-         const color = new THREE.Color();
-         color.setHex(Math.random() * 0xffffff);
-         return color;
-      }
+      
 
       // Implementing a scene, camera and renderer.
       const scene = new THREE.Scene();
@@ -146,6 +178,7 @@
       {
          renderer.render(scene, camera);
          tetrahedron.update();
+         tetrahedron.getRandomColor();
          requestAnimationFrame(repeatme);
       }
       repeatme();
