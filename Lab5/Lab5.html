@@ -27,6 +27,10 @@
             // Create the mesh (the tetrahedron itself)
             this.mesh = new THREE.Mesh(geometry, material);
 
+            // Set the initial velocity and direction for gravity
+            this.gravity = 0.005; // Adjust the strength of gravity
+            this.verticalAcceleration = 0.05; // Initial vertical acceleration
+
             // Create a wireframe for the tetrahedron
             const wireframeGeometry = new THREE.EdgesGeometry(geometry);
             const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
@@ -96,6 +100,17 @@
             // Move the tetrahedron up and down
             this.mesh.position.y += this.verticalVelocity * this.verticalDirection;
 
+            // Apply gravity to the tetrahedron
+            this.verticalVelocity += this.verticalAcceleration;
+            this.mesh.position.y -= this.verticalVelocity;
+
+            // Check if the tetrahedron reaches the ground (y = -15)
+            if (this.mesh.position.y < -15) 
+            {
+               this.mesh.position.y = -15; // Keep the tetrahedron above or on the ground
+               this.verticalVelocity = 0; // Reset vertical velocity when on the ground
+            }
+
             // Reverse the direction when the tetrahedron reaches the canvas boundaries
             if (this.mesh.position.x > 15 || this.mesh.position.x < -15) 
             {
@@ -110,18 +125,7 @@
 
          }
 
-         // Function to generate a random color
-         getRandomColor() 
-         {
-            // Generate random RGB values
-            //this.r = Math.random();
-           // this.g = Math.random();
-           // this.b = Math.random();
-         }
-
       }
-
-      
 
       // Implementing a scene, camera and renderer.
       const scene = new THREE.Scene();
@@ -178,7 +182,6 @@
       {
          renderer.render(scene, camera);
          tetrahedron.update();
-         tetrahedron.getRandomColor();
          requestAnimationFrame(repeatme);
       }
       repeatme();
