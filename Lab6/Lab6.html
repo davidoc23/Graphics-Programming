@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
  <head>
+    <!-- external scripts -->	
+	<script src="https://d3js.org/d3.v5.min.js"></script>	
+	<script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+
     <title>D3.js Lab</title>
     <meta charset="UTF-8">
     <style type="text/css"></style>
  </head>
  <body>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script type="text/javascript">
     
     //Get the JSON Data
@@ -20,49 +23,94 @@
     function plotCO2Data(data)
     {
         //Setup SVG size and margins
-        var margin = {top: 50 , right: 50 , bottom: 50 , left: 50 },
+        var margin = {top: 80 , right: 80 , bottom: 80 , left: 80 },
         width = 900 - margin.left - margin.right,
         height = 670 - margin.top - margin.bottom;
 
-        //Creating the x and y scales for interpolated C02 Value
-        var y = d3.scaleLinear()
-                .domain(d3.extent(data, function (d) {return d["Interpolated"] }))
-                .range([height, 0]);
+        var parseDate = d3.timeParse("%d/%m/%Y");
 
-        var parseDate = d3.timeParse("%Y-%m-%d");
-
-        var x = d3.scaleTime()
-                .domain(d3.extent(data, function (d) {return parseDate( d["Date"]); }))
-                .range([0, width]);
+        // x scales for EUR/USD - time (x-axis)
+			var x = d3.scaleTime()
+				.domain(d3.extent(data, function(d) { return parseDate(d["Date"]);}))			
+				.range([0,width]);
+					
+		// y scales for EUR/USD - value (y-axis)
+			var y = d3.scaleLinear()
+				.domain(d3.extent(data, function(d) { return d["EUR/USD Close"] }))
+				.range([height,0]);
 
         //Axes
         //x is the scaleTime()
         var xAxis = d3.axisBotton(x)
-                    .ticks(3);
+                    .ticks(5);
         
         //y is the ScaleLinear
         var yAxis = d3.axisLeft(y)
-                    .ticks(3);
+                    .ticks(5);
 
         //Draw line - maps x,y corodinates for each data point, using x,y scale functions
         var valueline = d3.line()
                         .x(function (d) {return x(parseDate(d["Date"])); }) //x pixel
                         .y(function (d) {return y(d["Interpolated"]); }); //y pixel
 
-        var svg = d3.select("body")
-                    .append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        
-        svg.append("g") //Append to a <g> - group element
-            .attr("class", "x axis")
-            .call(xAxis);
-        
-        svg.append("g") //Append to a <g> - group element
-            .attr("class", "y axis")
-            .call(yAxis);
+        var svg = d3.select('body')
+				.append("svg")
+					.attr("width", width + margin.left + margin.right)
+					.style("stroke", d3.color("red"))
+					.style("fill", d3.color("white"))
+					.attr("height", height + margin.top + margin.bottom)
+
+                .append('g')
+					// Not necessary but adds offset so that numeric values are visible
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+        // add x axis and the line object to the SVG element
+			// x axis on the bottom
+			svg.append('g')
+				.attr('class', 'x axis')
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis)
+				.selectAll("text")
+                    .style("text-anchor", "end")
+                    .style("stroke", d3.color("steelblue"))
+                    .attr("dx", "3em")
+                    .attr("dy", "-.3em")
+                    .attr("transform", "rotate(60)" );
+					
+		// add y axis and the line object to the SVG element
+			// y axis on the left					
+			svg.append('g')
+				.attr('class', 'y axis')
+				.style("stroke", d3.color("steelblue"))
+				.call(yAxis);	
+	
+		// text label for the x axis	
+			svg.append('text')
+				.attr('x', width / 2)
+				.attr('y', 40)
+				.attr('text-anchor', 'middle')
+				.style("stroke", d3.color("black"))
+				.text(' EUR vs. USD currency data ')
+				
+		// text label for the x axis	
+			svg.append("text")      
+				.attr("x", 400 )
+				.attr("y",  570)
+				.style("text-anchor", "middle")
+				.style("font-size", "26px")
+				.style("stroke", d3.color("black"))
+				.style("font-weight", "bold")
+				.text("Date");
+					
+		// text label for the y axis	
+			svg.append("text")    
+				.style("text-anchor", "middle")
+				.attr("y", "-2.2em")
+				.attr("transform", "translate(0," + (height/2) + ")rotate(-90)")
+				.style("stroke", d3.color("black"))
+				.style("font-size", "26px")
+				.text("EUR/USD");
 
         svg.append("path") //Add the valueline path
             .attr("d", valueline(data));
