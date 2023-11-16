@@ -65,27 +65,24 @@
          // Update method to handle rotation and movement
          update() 
          {
-            //Update the colour change
-            this.r = this.r+this.colorChangeSpeed;
-            this.g = this.g+this.colorChangeSpeed;
-            this.b = this.b+this.colorChangeSpeed;
+            // Update the color change
+            this.r = this.r + this.colorChangeSpeed;
+            this.g = this.g + this.colorChangeSpeed;
+            this.b = this.b + this.colorChangeSpeed;
 
-            //If the rgb values reaches 1.0 then reset to 0.0
-            if(this.r>= 1.0)
+            // If the rgb values reach 1.0, then reset to 0.0
+            if (this.r >= 1.0) 
             {
                this.r = 0.0;
             }
-            if(this.g>= 1.0)
+            if (this.g >= 1.0) 
             {
                this.g = 0.0;
             }
-            if(this.b >=1.0)
+            if (this.b >= 1.0) 
             {
                this.b = 0.0;
             }
-
-            //DEBUG
-            console.log(this.r);
 
             // Set the color to the tetrahedron
             this.mesh.material.color.setRGB(this.r, this.g, this.b);
@@ -101,28 +98,26 @@
             this.mesh.position.y += this.verticalVelocity * this.verticalDirection;
 
             // Apply gravity to the tetrahedron
-            this.verticalVelocity += this.verticalAcceleration;
-            this.mesh.position.y -= this.verticalVelocity;
+            //this.verticalVelocity -= this.gravity;
 
-            // Check if the tetrahedron reaches the ground (y = -15)
-            if (this.mesh.position.y < -15) 
-            {
-               this.mesh.position.y = -15; // Keep the tetrahedron above or on the ground
-               this.verticalVelocity = 0; // Reset vertical velocity when on the ground
-            }
+            // Check if the tetrahedron reaches the ground (y = -20)
+            //if (this.mesh.position.y < -20) 
+            //{
+               //this.mesh.position.y = -20; // Keep the tetrahedron above or on the ground
+               //this.verticalVelocity = 0; // Reset vertical velocity when on the ground
+            //}
 
             // Reverse the direction when the tetrahedron reaches the canvas boundaries
-            if (this.mesh.position.x > 15 || this.mesh.position.x < -15) 
+            if (this.mesh.position.x > 20 || this.mesh.position.x < -20) 
             {
                this.direction *= -1;
             }
 
             // Reverse the vertical direction when the tetrahedron reaches the canvas boundaries
-            if (this.mesh.position.y > 15 || this.mesh.position.y < -15) 
+            if (this.mesh.position.y > 20 || this.mesh.position.y < -20) 
             {
-                  this.verticalDirection *= -1;
+               this.verticalDirection *= -1;
             }
-
          }
 
       }
@@ -155,8 +150,8 @@
       var spotLight = new THREE.SpotLight(0xffffff);
       spotLight.position.set(0, 10, 20);
       spotLight.intensity = 90;
-      spotLight.distance = 50; // Increase the distance (adjust as needed)
-      spotLight.penumbra = 0.2; // Increase the penumbra (adjust as needed)
+      spotLight.distance = 20; // Increase the distance (adjust as needed)
+      spotLight.penumbra = 0.10; // Increase the penumbra (adjust as needed)
       spotLight.angle = Math.PI / 4; // Increase the angle (adjust as needed, this is in radians)
       spotLight.castShadow = true; // Enable casting shadows
       scene.add(spotLight);
