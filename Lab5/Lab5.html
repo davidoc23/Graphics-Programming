@@ -29,7 +29,7 @@
 
             // Set the initial velocity and direction for gravity
             this.gravity = 0.005; // Adjust the strength of gravity
-            this.verticalAcceleration = 0.05; // Initial vertical acceleration
+            this.verticalAcceleration = 0.0005; // Initial vertical acceleration
 
             // Create a wireframe for the tetrahedron
             const wireframeGeometry = new THREE.EdgesGeometry(geometry);
@@ -66,23 +66,9 @@
          update() 
          {
             // Update the color change
-            this.r = this.r + this.colorChangeSpeed;
-            this.g = this.g + this.colorChangeSpeed;
-            this.b = this.b + this.colorChangeSpeed;
-
-            // If the rgb values reach 1.0, then reset to 0.0
-            if (this.r >= 1.0) 
-            {
-               this.r = 0.0;
-            }
-            if (this.g >= 1.0) 
-            {
-               this.g = 0.0;
-            }
-            if (this.b >= 1.0) 
-            {
-               this.b = 0.0;
-            }
+            this.r = (this.r + this.colorChangeSpeed) % 1.0;
+            this.g = (this.g + this.colorChangeSpeed) % 1.0;
+            this.b = (this.b + this.colorChangeSpeed) % 1.0;
 
             // Set the color to the tetrahedron
             this.mesh.material.color.setRGB(this.r, this.g, this.b);
@@ -98,27 +84,26 @@
             this.mesh.position.y += this.verticalVelocity * this.verticalDirection;
 
             // Apply gravity to the tetrahedron
-            //this.verticalVelocity -= this.gravity;
+            this.verticalVelocity -= this.gravity;
 
             // Check if the tetrahedron reaches the ground (y = -20)
-            //if (this.mesh.position.y < -20) 
-            //{
-               //this.mesh.position.y = -20; // Keep the tetrahedron above or on the ground
-               //this.verticalVelocity = 0; // Reset vertical velocity when on the ground
-            //}
+            if (this.mesh.position.y < -30) {
+               this.mesh.position.y = -30; // Keep the tetrahedron above or on the ground
+               this.verticalVelocity = -this.verticalVelocity; // Reverse vertical velocity when hitting the ground
+            }
 
-            // Reverse the direction when the tetrahedron reaches the canvas boundaries
-            if (this.mesh.position.x > 20 || this.mesh.position.x < -20) 
+            // Check for collisions with the cube boundaries
+            if (this.mesh.position.x > 30 || this.mesh.position.x < -30) 
             {
                this.direction *= -1;
             }
 
-            // Reverse the vertical direction when the tetrahedron reaches the canvas boundaries
-            if (this.mesh.position.y > 20 || this.mesh.position.y < -20) 
+            if (this.mesh.position.y > 30 || this.mesh.position.y < -30) 
             {
                this.verticalDirection *= -1;
             }
          }
+
 
       }
 
@@ -129,7 +114,7 @@
       const renderer = new THREE.WebGLRenderer();
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
-      camera.position.z = 100;
+      camera.position.z = 90;
 
       // Set the background color
       const backgroundColor = new THREE.Color(0x87CEEB); // This is a light blue color
@@ -138,30 +123,31 @@
       // Create a Tetrahedron object 
       const tetrahedron = new Tetrahedron();
       
-      //Create a Cube Object
-      //const cubeGeometry = new THREE.BoxGeometry(20, 20, 20);
-      //const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x00ff00, transparent: true, opacity: 0.8 });
-      //const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      //cube.castShadow = true;
-      //cube.receiveShadow = true;
-      //scene.add(cube);
-
       // Add a spot light.
       var spotLight = new THREE.SpotLight(0xffffff);
       spotLight.position.set(0, 10, 20);
-      spotLight.intensity = 90;
-      spotLight.distance = 50; // Increase the distance (adjust as needed)
-      spotLight.penumbra = 0.10; // Increase the penumbra (adjust as needed)
+      spotLight.intensity = 50;
+      spotLight.distance = 80; // Increase the distance (adjust as needed)
+      spotLight.penumbra = 0.30; // Increase the penumbra (adjust as needed)
       spotLight.angle = Math.PI / 4; // Increase the angle (adjust as needed, this is in radians)
       spotLight.castShadow = true; // Enable casting shadows
       scene.add(spotLight);
 
+      //Create a Cube Object
+      const cubeGeometry = new THREE.BoxGeometry(60, 60, 60);
+      const cubeMaterial = new THREE.MeshLambertMaterial({transparent: true, opacity: 0.1 });
+      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      cube.castShadow = true;
+      cube.receiveShadow = true;
+      scene.add(cube);
+
       // Add a plane to receive the shadow
-      const planeGeometry = new THREE.PlaneGeometry(50, 50, 32);
+      const planeGeometry = new THREE.PlaneGeometry(60, 60);
       const planeMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
       const plane = new THREE.Mesh(planeGeometry, planeMaterial);
       plane.receiveShadow = true;
-      plane.rotation.x = -Math.PI / 2; // Rotate the plane to be horizontal
+      plane.rotation.x = -Math.PI / 2 ;// Rotate the plane to be horizontal
+      plane.position.y = -50;
       scene.add(plane);
 
       // Create a camera helper to visualize the light source
