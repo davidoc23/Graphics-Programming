@@ -38,6 +38,16 @@
 			var y = d3.scaleLinear()
 				.domain(d3.extent(data, function (d) { return d["Interpolated"] }))
 				.range([height, 0]);
+			
+			// y scales for trend data (y-axis)
+			var yTrend = d3.scaleLinear()
+			.domain(d3.extent(data, function (d) { return d["Trend"]; }))
+			.range([height, 0]);
+
+			// Draw line for trend data
+			var trendLine = d3.line()
+			.x(function (d) { return x(parseDate(d["Date"])); })
+			.y(function (d) { return yTrend(d["Trend"]); });
 
 			// Axes
 			// x is the scaleTime()
@@ -133,6 +143,11 @@
 				.style("stroke", "red")
 				.style("fill", "none"); // Add this line to remove the fill color
 				
+			// Add the trendline path (blue line)
+			svg.append("path")
+			.attr("d", trendLine(data))
+			.style("stroke", "blue")
+			.style("fill", "none");
 
 			// Add zoom functionality to the x-axis
             var zoom = d3.zoom()
