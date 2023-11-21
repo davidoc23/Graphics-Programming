@@ -125,7 +125,7 @@
 				.style("stroke", d3.color("black"))
 				.style("font-size", "18px")
 				.style("font-weight", "bold")
-				.text(' EUR vs. USD currency data ');
+				.text('CO2 vs Time');
 
 			// text label for the bottom x axis	
 			svg.append("text")
@@ -145,24 +145,18 @@
 				.style("stroke", d3.color("black"))
 				.style("font-size", "20px")
 				.style("font-weight", "bold")
-				.text("EUR/USD");
+				.text("Co2 Levels");
 
 			// Add the valueline path (red line)
 			svg.append("path")
 				.attr("d", valueline(data))
 				.style("stroke", "red")
 				.style("fill", "none"); // Add this line to remove the fill color
-				
+
 			// Add the trendline path (blue line)
 			svg.append("path")
 			.attr("d", trendLine(data))
 			.style("stroke", "blue")
-			.style("fill", "none");
-
-			// Add the anomaly line (blue line)
-			svg.append("path")
-			.attr("d", anomalyLine(data))
-			.style("stroke", "green")
 			.style("fill", "none");
 
 			// Add zoom functionality to the x-axis
@@ -179,7 +173,8 @@
                 .style("pointer-events", "all")
                 .call(zoom);
 
-            function zoomed() {
+            function zoomed() 
+			{
                 x.range([d3.event.transform.applyX(0), d3.event.transform.applyX(width)]);
                 svg.select(".x.axis").call(xAxis);
                 svg.select(".line").attr("d", valueline);
