@@ -49,6 +49,16 @@
 			.x(function (d) { return x(parseDate(d["Date"])); })
 			.y(function (d) { return yTrend(d["Trend"]); });
 
+			// y scales for temperature anomaly data (y-axis)
+			var yAnomaly = d3.scaleLinear()
+			.domain(d3.extent(data, function (d) { return d["Average"]; }))
+			.range([height, 0]);
+
+			// Draw line for temperature anomaly data
+			var anomalyLine = d3.line()
+			.x(function (d) { return x(parseDate(d["Date"])); })
+			.y(function (d) { return yAnomaly(d["Average"]); });
+
 			// Axes
 			// x is the scaleTime()
 			var xAxis = d3.axisBottom(x)
@@ -147,6 +157,12 @@
 			svg.append("path")
 			.attr("d", trendLine(data))
 			.style("stroke", "blue")
+			.style("fill", "none");
+
+			// Add the anomaly line (blue line)
+			svg.append("path")
+			.attr("d", anomalyLine(data))
+			.style("stroke", "green")
 			.style("fill", "none");
 
 			// Add zoom functionality to the x-axis
