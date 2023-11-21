@@ -6,6 +6,7 @@
 	<meta charset="UTF-8">
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	
 </head>
 
 <body>
@@ -52,11 +53,6 @@
 				.x(function (d) { return x(parseDate(d["Date"])); }) // x pixel
 				.y(function (d) { return y(d["Interpolated"]); }); // y pixel
 
-			// Draw line for trend data 
-			var trendline = d3.line()
-				.x(function (d) { return x(parseDate(d["Date"])); })
-				.y(function (d) { return y(d["TrendData"]); }) 
-
 			var svg = d3.select('body')
 				.append("svg")
 				.attr("width", width + margin.left + margin.right)
@@ -67,7 +63,7 @@
 			// Add your name at the top with an underline
 			var nameText = svg.append('text')
 				.attr('x', width / 2)
-				.attr('y', -50)
+				.attr('y', -80)
 				.attr('text-anchor', 'middle')
 				.style("font-size", "32px")
 				.style("font-weight", "bold");
@@ -104,7 +100,7 @@
 			// text label for the top x axis	
 			svg.append('text')
 				.attr('x', width / 2)
-				.attr('y', 40)
+				.attr('y', -10)
 				.attr('text-anchor', 'middle')
 				.style("stroke", d3.color("black"))
 				.style("font-size", "18px")
@@ -134,12 +130,9 @@
 			// Add the valueline path (red line)
 			svg.append("path")
 				.attr("d", valueline(data))
-				.style("stroke", "red");
-
-			// Add the trendline path (blue line)
-			svg.append("path")
-				.attr("d", trendline(data))
-				.style("stroke", "blue");
+				.style("stroke", "red")
+				.style("fill", "none"); // Add this line to remove the fill color
+				
 
 			// Add zoom functionality to the x-axis
             var zoom = d3.zoom()
