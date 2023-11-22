@@ -2,185 +2,300 @@
 <html>
 
 <head>
-	<title>D3.js Lab</title>
-	<meta charset="UTF-8">
-	<script src="https://d3js.org/d3.v5.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-	
+    <title>D3.js Lab</title>
+    <meta charset="UTF-8">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 </head>
 
 <body>
-	<script type="text/javascript">
-		// Get the JSON Data
-		d3.json("https://pkgstore.datahub.io/core/co2-ppm/co2-mm-mlo_json/data/aed7eb0d19cbcd90790525d40728b0a8/co2-mm-mlo_json.json").then(function (data) 
+    <script type="text/javascript">
+        // Get the CO2 JSON Data
+        d3.json("https://pkgstore.datahub.io/core/co2-ppm/co2-mm-mlo_json/data/aed7eb0d19cbcd90790525d40728b0a8/co2-mm-mlo_json.json")
+            .then(function (co2Data) {
+                // Get the Temperature Anomaly JSON Data
+                $.ajax({
+                    url: "https://pkgstore.datahub.io/core/global-temp/annual_json/data/529e69dbd597709e36ce11a5d0bb7243/annual_json.json",
+                    method: "GET",
+                    dataType: "json",
+                }).done(function (temperatureData) {
+                    // Combine CO2 and Temperature Anomaly data
+                    co2Data.forEach(function (d) {
+                        var correspondingTempData = temperatureData.find(function (temp) {
+                            return temp.Year === new Date(d.Date).getFullYear();
+                        });
+                        if (correspondingTempData) {
+                            d.AverageTemperature = correspondingTempData.Mean;
+                        }
+                    });
+
+                    plotCO2Data(co2Data);
+                    plotTemperatureData(temperatureData);
+                }).fail(function (error) {
+                    console.error("Error loading temperature data:", error);
+                });
+            })
+            .catch(function (error) {
+                console.error("Error loading CO2 data:", error);
+            });
+
+        function plotCO2Data(data) 
 		{
-			plotCO2Data(data);
-		}).catch(function (error) 
+            // Setup SVG size and margins
+            var margin = { top: 80, right: 80, bottom: 80, left: 80 },
+                width = 900 - margin.left - margin.right,
+                height = 670 - margin.top - margin.bottom;
+
+            var parseDate = d3.timeParse("%Y-%m-%d");
+
+            // x scales for time (x-axis)
+            var x = d3.scaleTime()
+                .domain(d3.extent(data, function (d) { return parseDate(d["Date"]); }))
+                .range([0, width]);
+
+            // y scales for value (y-axis)
+            var y = d3.scaleLinear()
+                .domain(d3.extent(data, function (d) { return d["Interpolated"] }))
+                .range([height, 0]);
+
+            // y scales for trend data (y-axis)
+            var yTrend = d3.scaleLinear()
+                .domain(d3.extent(data, function (d) { return d["Trend"]; }))
+                .range([height, 0]);
+
+            // Draw line for trend data
+            var trendLine = d3.line()
+                .x(function (d) { return x(parseDate(d["Date"])); })
+                .y(function (d) { return yTrend(d["Trend"]); });
+
+            // Axes
+            // x is the scaleTime()
+            var xAxis = d3.axisBottom(x)
+                .ticks(5);
+
+            // y is the ScaleLinear
+            var yAxis = d3.axisLeft(y)
+                .ticks(5);
+
+            // Draw line - maps x,y coordinates for each data point, using x,y scale functions
+            var valueline = d3.line()
+                .x(function (d) { return x(parseDate(d["Date"])); }) // x pixel
+                .y(function (d) { return y(d["Interpolated"]); }); // y pixel
+
+            // Create SVG element
+            var svg = d3.select('body')
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append('g')
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            // Add your name at the top with an underline
+            var nameText = svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', -80)
+                .attr('text-anchor', 'middle')
+                .style("font-size", "32px")
+                .style("font-weight", "bold");
+
+            // Add an underline using <tspan>
+            nameText.append("tspan")
+                .attr("dy", "1.2em")
+                .attr("x", width / 2)
+                .style("text-anchor", "middle")
+                .style("font-size", "32px")
+                .style("text-decoration", "underline")
+                .text("David O Connor");
+
+            // add x axis and the line object to the SVG element
+            // x axis on the bottom
+            svg.append('g')
+                .attr('class', 'x axis')
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .style("stroke", d3.color("steelblue"))
+                .attr("dx", "3em")
+                .attr("dy", "-.3em")
+                .attr("transform", "rotate(60)");
+
+            // add y axis and the line object to the SVG element
+            // y axis on the left
+            svg.append('g')
+                .attr('class', 'y axis')
+                .style("stroke", d3.color("steelblue"))
+                .call(yAxis);
+
+            // text label for the top x axis
+            svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', -10)
+                .attr('text-anchor', 'middle')
+                .style("stroke", d3.color("black"))
+                .style("font-size", "18px")
+                .style("font-weight", "bold")
+                .text('CO2 vs Time');
+
+            // text label for the bottom x axis
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 10)
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("stroke", d3.color("black"))
+                .style("font-weight", "bold")
+                .text("Date");
+
+            // text label for the y axis
+            svg.append("text")
+                .style("text-anchor", "middle")
+                .attr("y", "-2.2em")
+                .attr("transform", "translate(0," + (height / 2) + ")rotate(-90)")
+                .style("stroke", d3.color("black"))
+                .style("font-size", "20px")
+                .style("font-weight", "bold")
+                .text("Co2 Levels");
+
+            // Add the valueline path (red line)
+            svg.append("path")
+                .attr("d", valueline(data))
+                .style("stroke", "red")
+                .style("fill", "none"); // Add this line to remove the fill color
+
+            // Add the trendline path (blue line)
+            svg.append("path")
+                .attr("d", trendLine(data))
+                .style("stroke", "blue")
+                .style("fill", "none");
+        }
+
+        function plotTemperatureData(data) 
 		{
-			console.error("Error loading data:", error);
-		});
+            // Setup SVG size and margins
+            var margin = { top: 80, right: 80, bottom: 80, left: 80 },
+                width = 900 - margin.left - margin.right,
+                height = 270 - margin.top - margin.bottom;
 
-		function plotCO2Data(data) 
-		{
-			// Setup SVG size and margins
-			var margin = { top: 80, right: 80, bottom: 80, left: 80 },
-				width = 900 - margin.left - margin.right,
-				height = 670 - margin.top - margin.bottom;
+            var parseDate = d3.timeParse("%Y-%m-%d");
 
-			var parseDate = d3.timeParse("%Y-%m-%d");
+            // x scales for time (x-axis)
+            var x = d3.scaleTime()
+                .domain(d3.extent(data, function (d) { return new Date(d["Year"], 0, 1); })) // Assuming "Year" property
+                .range([0, width]);
 
-			// x scales for time (x-axis)
-			var x = d3.scaleTime()
-				.domain(d3.extent(data, function (d) { return parseDate(d["Date"]); }))
-				.range([0, width]);
+            // y scales for temperature data (y-axis)
+            var yTemperature = d3.scaleLinear()
+                .domain(d3.extent(data, function (d) { return d["Mean"]; })) // Assuming "Mean" property
+                .range([height, 0]);
 
-			// y scales for value (y-axis)
-			var y = d3.scaleLinear()
-				.domain(d3.extent(data, function (d) { return d["Interpolated"] }))
-				.range([height, 0]);
-			
-			// y scales for trend data (y-axis)
-			var yTrend = d3.scaleLinear()
-			.domain(d3.extent(data, function (d) { return d["Trend"]; }))
-			.range([height, 0]);
+            // Draw line for temperature data
+            var temperatureLine = d3.line()
+                .x(function (d) { return x(new Date(d["Year"], 0, 1)); }) // Assuming "Year" property
+                .y(function (d) { return yTemperature(d["Mean"]); }); // Assuming "Mean" property
 
-			// Draw line for trend data
-			var trendLine = d3.line()
-			.x(function (d) { return x(parseDate(d["Date"])); })
-			.y(function (d) { return yTrend(d["Trend"]); });
+            // Axes
+            // x is the scaleTime()
+            var xAxis = d3.axisBottom(x)
+                .ticks(5);
 
-			// y scales for temperature anomaly data (y-axis)
-			var yAnomaly = d3.scaleLinear()
-			.domain(d3.extent(data, function (d) { return d["Average"]; }))
-			.range([height, 0]);
+            // y is the ScaleLinear for temperature
+            var yAxis = d3.axisLeft(yTemperature)
+                .ticks(5);
 
-			// Draw line for temperature anomaly data
-			var anomalyLine = d3.line()
-			.x(function (d) { return x(parseDate(d["Date"])); })
-			.y(function (d) { return yAnomaly(d["Average"]); });
+            // Create SVG element
+            var svg = d3.select('body')
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append('g')
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-			// Axes
-			// x is the scaleTime()
-			var xAxis = d3.axisBottom(x)
-				.ticks(5);
+            // add x axis and the line object to the SVG element
+            // x axis on the bottom
+            svg.append('g')
+                .attr('class', 'x axis')
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .style("stroke", d3.color("steelblue"))
+                .attr("dx", "3em")
+                .attr("dy", "-.3em")
+                .attr("transform", "rotate(60)");
 
-			// y is the ScaleLinear
-			var yAxis = d3.axisLeft(y)
-				.ticks(5);
+            // add y axis and the line object to the SVG element
+            // y axis on the left
+            svg.append('g')
+                .attr('class', 'y axis')
+                .style("stroke", d3.color("steelblue"))
+                .call(yAxis);
 
-			// Draw line - maps x,y coordinates for each data point, using x,y scale functions
-			var valueline = d3.line()
-				.x(function (d) { return x(parseDate(d["Date"])); }) // x pixel
-				.y(function (d) { return y(d["Interpolated"]); }); // y pixel
+            // text label for the top x axis
+            svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', -50)
+                .attr('text-anchor', 'middle')
+                .style("stroke", d3.color("black"))
+                .style("font-size", "18px")
+                .style("font-weight", "bold")
+                .text('Temperature vs Time');
 
-			var svg = d3.select('body')
-				.append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
-				.append('g')
-				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            // text label for the bottom x axis
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 10)
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("stroke", d3.color("black"))
+                .style("font-weight", "bold")
+                .text("Date");
 
-			// Add your name at the top with an underline
-			var nameText = svg.append('text')
-				.attr('x', width / 2)
-				.attr('y', -80)
-				.attr('text-anchor', 'middle')
-				.style("font-size", "32px")
-				.style("font-weight", "bold");
+            // text label for the y axis (Temperature)
+            svg.append("text")
+                .style("text-anchor", "middle")
+                .attr("y", "-2.2em")
+                .attr("transform", "translate(0," + (height / 2) + ")rotate(-90)")
+                .style("stroke", d3.color("black"))
+                .style("font-size", "20px")
+                .style("font-weight", "bold")
+                .text("Temperature Anomaly");
 
-			// Add an underline using <tspan>
-			nameText.append("tspan")
-				.attr("dy", "1.2em")
-				.attr("x", width / 2)
-				.style("text-anchor", "middle")
-				.style("font-size", "32px")
-				.style("text-decoration", "underline")
-				.text("David O Connor");
+            // Add the temperature line (orange line)
+            svg.append("path")
+                .attr("d", temperatureLine(data))
+                .style("stroke", "Orange")
+                .style("fill", "none");
 
-			// add x axis and the line object to the SVG element
-			// x axis on the bottom
-			svg.append('g')
-				.attr('class', 'x axis')
-				.attr("transform", "translate(0," + height + ")")
-				.call(xAxis)
-				.selectAll("text")
-				.style("text-anchor", "end")
-				.style("stroke", d3.color("steelblue"))
-				.attr("dx", "3em")
-				.attr("dy", "-.3em")
-				.attr("transform", "rotate(60)");
+			// Add zoom functionality
+			var zoom = d3.zoom()
+				.scaleExtent([1, 8])
+				.on("zoom", function () {
+					var newTransform = d3.event.transform;
+					var newScaleX = newTransform.rescaleX(x);
+					var newScaleY = newTransform.rescaleY(yTemperature);
 
-			// add y axis and the line object to the SVG element
-			// y axis on the left					
-			svg.append('g')
-				.attr('class', 'y axis')
-				.style("stroke", d3.color("steelblue"))
-				.call(yAxis);
+					// Update the line based on new scales
+					svg.select(".line")
+						.attr("d", temperatureLine.x(function (d) { return newScaleX(new Date(d["Year"], 0, 1)); }) // Update x scale
+							.y(function (d) { return newScaleY(d["Mean"]); })); // Update y scale
 
-			// text label for the top x axis	
-			svg.append('text')
-				.attr('x', width / 2)
-				.attr('y', -10)
-				.attr('text-anchor', 'middle')
-				.style("stroke", d3.color("black"))
-				.style("font-size", "18px")
-				.style("font-weight", "bold")
-				.text('CO2 vs Time');
+					// Update the axes
+					svg.select(".x.axis").call(xAxis.scale(newScaleX));
+					svg.select(".y.axis").call(yAxis.scale(newScaleY));
+				});
 
-			// text label for the bottom x axis	
-			svg.append("text")
-				.attr("x", width / 2)
-				.attr("y", height + margin.bottom - 10)
-				.style("text-anchor", "middle")
-				.style("font-size", "20px")
-				.style("stroke", d3.color("black"))
-				.style("font-weight", "bold")
-				.text("Date");
+			svg.append("rect")
+				.attr("width", width)
+				.attr("height", height)
+				.style("fill", "none")
+				.style("pointer-events", "all")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+				.call(zoom);
 
-			// text label for the y axis	
-			svg.append("text")
-				.style("text-anchor", "middle")
-				.attr("y", "-2.2em")
-				.attr("transform", "translate(0," + (height / 2) + ")rotate(-90)")
-				.style("stroke", d3.color("black"))
-				.style("font-size", "20px")
-				.style("font-weight", "bold")
-				.text("Co2 Levels");
-
-			// Add the valueline path (red line)
-			svg.append("path")
-				.attr("d", valueline(data))
-				.style("stroke", "red")
-				.style("fill", "none"); // Add this line to remove the fill color
-
-			// Add the trendline path (blue line)
-			svg.append("path")
-			.attr("d", trendLine(data))
-			.style("stroke", "blue")
-			.style("fill", "none");
-
-			// Add zoom functionality to the x-axis
-            var zoom = d3.zoom()
-                .scaleExtent([1, Infinity])
-                .extent([[0, 0], [width, height]])
-                .translateExtent([[0, 0], [width, height]])
-                .on("zoom", zoomed);
-
-            svg.append("rect")
-                .attr("width", width)
-                .attr("height", height)
-                .style("fill", "none")
-                .style("pointer-events", "all")
-                .call(zoom);
-
-            function zoomed() 
-			{
-                x.range([d3.event.transform.applyX(0), d3.event.transform.applyX(width)]);
-                svg.select(".x.axis").call(xAxis);
-                svg.select(".line").attr("d", valueline);
-            }
-		}
-	</script>
+        }
+    </script>
 
 </body>
 
