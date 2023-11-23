@@ -268,31 +268,47 @@
                 .style("stroke", "Orange")
                 .style("fill", "none");
 
-			// Add zoom functionality
-			var zoom = d3.zoom()
-				.scaleExtent([1, 8])
-				.on("zoom", function () {
-					var newTransform = d3.event.transform;
-					var newScaleX = newTransform.rescaleX(x);
-					var newScaleY = newTransform.rescaleY(yTemperature);
+			// Add zoom functionality for x-axis only
+            var zoom = d3.zoom()
+                .scaleExtent([1, 8])
+                .on("zoom", zoomed);
 
-					// Update the line based on new scales
-					svg.select(".line")
-						.attr("d", temperatureLine.x(function (d) { return newScaleX(new Date(d["Year"], 0, 1)); }) // Update x scale
-							.y(function (d) { return newScaleY(d["Mean"]); })); // Update y scale
+            // Create a brush for the x-axis
+			var brush = d3.brushX()
+			.extent([[0, 0], [width, height]]) // Define the brush extent
+			.on("brush end", brushed); // Define the brushing event and callback function
 
-					// Update the axes
-					svg.select(".x.axis").call(xAxis.scale(newScaleX));
-					svg.select(".y.axis").call(yAxis.scale(newScaleY));
-				});
+			// Append a group element to the SVG to hold the brush
+			svg.append("g")
+				.attr("class", "brush")
+				.call(brush) // Call the brush function to initialize it
+				.call(brush.move, x.range()); // Set the initial position of the brush to cover the entire x-axis
 
-			svg.append("rect")
-				.attr("width", width)
-				.attr("height", height)
-				.style("fill", "none")
-				.style("pointer-events", "all")
-				.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-				.call(zoom);
+			// Define the zoom function for the chart
+			function zoomed() 
+			{
+				var transform = d3.event.transform;
+				x.domain(transform.rescaleX(x).domain()); // Update the x domain based on the zoom transformation
+				svg.select(".line").attr("d", temperatureLine); // Update the temperature line path
+				svg.select(".x.axis").call(xAxis); // Update the x-axis
+			}
+
+			// Define the brushed function for handling brush events
+			function brushed() 
+			{
+				// Ignore the brush event if it was triggered by a zoom event
+				if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return;
+
+				var s = d3.event.selection || x.range(); // Get the current brush selection or the entire x-axis range
+				x.domain(s.map(x.invert, x)); // Update the x domain based on the brush selection
+				svg.select(".line").attr("d", temperatureLine); // Update the temperature line path
+				svg.select(".x.axis").call(xAxis); // Update the x-axis
+
+				// Update the zoom transform to match the brushed selection
+				svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+					.scale(width / (s[1] - s[0]))
+					.translate(-s[0], 0));
+			}
 
         }
     </script>
