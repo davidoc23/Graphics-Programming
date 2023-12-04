@@ -108,3 +108,12 @@ canny_galway = cv2.Canny(imgGray_galway, cannyThreshold_galway, cannyParam2_galw
 plt.imshow(canny_galway, cmap='gray')
 plt.title('Galway Canny Edge Detection'), plt.xticks([]), plt.yticks([])
 plt.show()
+
+# Threshold the Sobel sum image and visualize for different thresholds
+threshold_values = [10, 50, 100, 200, 300]
+
+for threshold in threshold_values:
+    sobel_sum_thresholded = np.where(sobelCombined > threshold, 1, 0)
+    plt.imshow(sobel_sum_thresholded, cmap='gray')
+    plt.title(f'ATU Sobel Sum Thresholded (Threshold={threshold})')
+    plt.show()
