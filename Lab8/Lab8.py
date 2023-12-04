@@ -134,3 +134,11 @@ for threshold in threshold_values:
     plt.imshow(sobel_sum_thresholded_galway, cmap='gray')
     plt.title(f'Galway Sobel Sum Thresholded (Threshold={threshold})')
     plt.show()
+
+# Manually write your own edge detector using a first derivative
+img_derivative_galway = np.gradient(imgGray_galway, axis=1)
+img_derivative_thresholded_galway = np.where(np.abs(img_derivative_galway) > 20, 1, 0)
+
+plt.imshow(img_derivative_thresholded_galway, cmap='gray')
+plt.title('Galway Custom Edge Detector (First Derivative)')
+plt.show()
