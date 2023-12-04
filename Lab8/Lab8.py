@@ -44,3 +44,13 @@ plt.subplot(1, 3, 3), plt.imshow(sobelCombined, cmap='gray')
 plt.title('ATU Combined Sobel'), plt.xticks([]), plt.yticks([])
 
 plt.show()
+
+# Step 11: Perform Canny edge detection on the ATU image
+cannyThreshold = 100
+cannyParam2 = 200
+canny = cv2.Canny(imgGray, cannyThreshold, cannyParam2)
+
+# Step 12: Plot the Canny edge detection result for ATU
+plt.imshow(canny, cmap='gray')
+plt.title('ATU Canny Edge Detection'), plt.xticks([]), plt.yticks([])
+plt.show()
