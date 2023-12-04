@@ -78,3 +78,23 @@ for i, kernel_size in enumerate(kernel_sizes_galway):
     plt.title(f'Galway Blurred {kernel_size}x{kernel_size}'), plt.xticks([]), plt.yticks([])
 
 plt.show()
+
+# Step 12: Perform Sobel operator on the Galway image
+sobelHorizontal_galway = cv2.Sobel(imgGray_galway, cv2.CV_64F, 1, 0, ksize=5)
+sobelVertical_galway = cv2.Sobel(imgGray_galway, cv2.CV_64F, 0, 1, ksize=5)
+
+# Step 13: Plot Sobel outputs for Galway
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 3, 1), plt.imshow(sobelHorizontal_galway, cmap='gray')
+plt.title('Galway Sobel Horizontal'), plt.xticks([]), plt.yticks([])
+
+plt.subplot(1, 3, 2), plt.imshow(sobelVertical_galway, cmap='gray')
+plt.title('Galway Sobel Vertical'), plt.xticks([]), plt.yticks([])
+
+# Step 14: Combine horizontal and vertical edges for Galway
+sobelCombined_galway = cv2.addWeighted(np.abs(sobelHorizontal_galway), 0.5, np.abs(sobelVertical_galway), 0.5, 0)
+plt.subplot(1, 3, 3), plt.imshow(sobelCombined_galway, cmap='gray')
+plt.title('Galway Combined Sobel'), plt.xticks([]), plt.yticks([])
+
+plt.show()
