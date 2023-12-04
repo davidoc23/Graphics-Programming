@@ -54,3 +54,27 @@ canny = cv2.Canny(imgGray, cannyThreshold, cannyParam2)
 plt.imshow(canny, cmap='gray')
 plt.title('ATU Canny Edge Detection'), plt.xticks([]), plt.yticks([])
 plt.show()
+
+# Step 13: Trial all the above with another image of your choice
+# Step 8: Load the Galway image
+img_galway = cv2.imread('galway.jpg')
+
+# Step 9: Convert the Galway image to grayscale
+imgGray_galway = cv2.cvtColor(img_galway, cv2.COLOR_BGR2GRAY)
+
+# Step 10: Plotting Galway images with Matplotlib
+plt.subplot(2, 2, 1), plt.imshow(cv2.cvtColor(img_galway, cv2.COLOR_BGR2RGB))
+plt.title('Galway Original'), plt.xticks([]), plt.yticks([])
+
+plt.subplot(2, 2, 2), plt.imshow(imgGray_galway, cmap='gray')
+plt.title('Galway GrayScale'), plt.xticks([]), plt.yticks([])
+
+# Step 11: Apply GaussianBlur with different kernel sizes to Galway image
+kernel_sizes_galway = [3, 9]
+
+for i, kernel_size in enumerate(kernel_sizes_galway):
+    imgOut_galway = cv2.GaussianBlur(imgGray_galway, (kernel_size, kernel_size), 0)
+    plt.subplot(2, 2, i + 3), plt.imshow(imgOut_galway, cmap='gray')
+    plt.title(f'Galway Blurred {kernel_size}x{kernel_size}'), plt.xticks([]), plt.yticks([])
+
+plt.show()
