@@ -117,3 +117,11 @@ for threshold in threshold_values:
     plt.imshow(sobel_sum_thresholded, cmap='gray')
     plt.title(f'ATU Sobel Sum Thresholded (Threshold={threshold})')
     plt.show()
+
+# Manually write your own edge detector using a first derivative
+img_derivative = np.gradient(imgGray, axis=1)
+img_derivative_thresholded = np.where(np.abs(img_derivative) > 20, 1, 0)
+
+plt.imshow(img_derivative_thresholded, cmap='gray')
+plt.title('ATU Custom Edge Detector (First Derivative)')
+plt.show()
