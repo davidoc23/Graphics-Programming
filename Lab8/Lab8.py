@@ -125,3 +125,12 @@ img_derivative_thresholded = np.where(np.abs(img_derivative) > 20, 1, 0)
 plt.imshow(img_derivative_thresholded, cmap='gray')
 plt.title('ATU Custom Edge Detector (First Derivative)')
 plt.show()
+
+# Threshold the Sobel sum image and visualize for different thresholds
+threshold_values = [10, 50, 100, 200, 300]
+
+for threshold in threshold_values:
+    sobel_sum_thresholded_galway = np.where(sobelCombined_galway > threshold, 1, 0)
+    plt.imshow(sobel_sum_thresholded_galway, cmap='gray')
+    plt.title(f'Galway Sobel Sum Thresholded (Threshold={threshold})')
+    plt.show()
