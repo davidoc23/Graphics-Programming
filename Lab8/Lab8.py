@@ -98,3 +98,13 @@ plt.subplot(1, 3, 3), plt.imshow(sobelCombined_galway, cmap='gray')
 plt.title('Galway Combined Sobel'), plt.xticks([]), plt.yticks([])
 
 plt.show()
+
+# Step 15: Perform Canny edge detection on the Galway image
+cannyThreshold_galway = 100
+cannyParam2_galway = 200
+canny_galway = cv2.Canny(imgGray_galway, cannyThreshold_galway, cannyParam2_galway)
+
+# Step 16: Plot the Canny edge detection result for Galway
+plt.imshow(canny_galway, cmap='gray')
+plt.title('Galway Canny Edge Detection'), plt.xticks([]), plt.yticks([])
+plt.show()
