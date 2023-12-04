@@ -24,3 +24,23 @@ for i, kernel_size in enumerate(kernel_sizes):
     plt.title(f'ATU Blurred {kernel_size}x{kernel_size}'), plt.xticks([]), plt.yticks([])
 
 plt.show()
+
+# Step 8: Perform Sobel operator on the ATU image
+sobelHorizontal = cv2.Sobel(imgGray, cv2.CV_64F, 1, 0, ksize=5)
+sobelVertical = cv2.Sobel(imgGray, cv2.CV_64F, 0, 1, ksize=5)
+
+# Step 9: Plot Sobel outputs for ATU
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 3, 1), plt.imshow(sobelHorizontal, cmap='gray')
+plt.title('ATU Sobel Horizontal'), plt.xticks([]), plt.yticks([])
+
+plt.subplot(1, 3, 2), plt.imshow(sobelVertical, cmap='gray')
+plt.title('ATU Sobel Vertical'), plt.xticks([]), plt.yticks([])
+
+# Step 10: Combine horizontal and vertical edges for ATU
+sobelCombined = cv2.addWeighted(np.abs(sobelHorizontal), 0.5, np.abs(sobelVertical), 0.5, 0)
+plt.subplot(1, 3, 3), plt.imshow(sobelCombined, cmap='gray')
+plt.title('ATU Combined Sobel'), plt.xticks([]), plt.yticks([])
+
+plt.show()
