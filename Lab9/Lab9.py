@@ -214,7 +214,7 @@ thresh_callback(thresh)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-#Advanced Question part 2 
+#Advanced Question part 2 image 1
 # Load the image
 img = cv2.imread('ATU1.jpg')
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
