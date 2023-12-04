@@ -13,3 +13,13 @@ blockSize = 2
 aperture_size = 3
 k = 0.04
 dst = cv2.cornerHarris(gray_img, blockSize, aperture_size, k)
+
+# Exercise 6: Create a deep copy
+imgHarris = img.copy()
+
+# Exercise 7: Plot Harris corners
+threshold = 0.01  # You can experiment with different values
+for i in range(len(dst)):
+    for j in range(len(dst[i])):
+        if dst[i][j] > (threshold * dst.max()):
+            cv2.circle(imgHarris, (j, i), 3, (0, 255, 0), -1)
