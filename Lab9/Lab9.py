@@ -23,3 +23,14 @@ for i in range(len(dst)):
     for j in range(len(dst[i])):
         if dst[i][j] > (threshold * dst.max()):
             cv2.circle(imgHarris, (j, i), 3, (0, 255, 0), -1)
+
+# Exercise 8: Display Harris corners
+cv2.imshow('Harris Corners', imgHarris)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# Exercise 9: Shi Tomasi corner detection
+maxCorners = 100
+qualityLevel = 0.01
+minDistance = 10
+corners = cv2.goodFeaturesToTrack(gray_img, maxCorners, qualityLevel, minDistance)
