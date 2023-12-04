@@ -213,3 +213,31 @@ thresh_callback(thresh)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+#Advanced Question part 2 
+# Load the image
+img = cv2.imread('ATU2.jpg')
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# Convert to HSV
+img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+# Split HSV channels
+h, s, v = cv2.split(img_hsv)
+
+# Display the result using matplotlib subplot
+plt.figure(figsize=(12, 4))
+
+plt.subplot(131)
+plt.imshow(img_rgb)
+plt.title('Original Image')
+
+plt.subplot(132)
+plt.imshow(h, cmap='gray')
+plt.title('H Channel')
+
+plt.subplot(133)
+plt.imshow(s, cmap='gray')
+plt.title('S Channel')
+
+plt.show()
