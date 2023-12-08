@@ -26,8 +26,8 @@ for i, kernel_size in enumerate(kernel_sizes):
 plt.show()
 
 # Step 8: Perform Sobel operator on the ATU image
-sobelHorizontal = cv2.Sobel(imgGray, cv2.CV_64F, 1, 0, ksize=5)
-sobelVertical = cv2.Sobel(imgGray, cv2.CV_64F, 0, 1, ksize=5)
+sobelHorizontal = cv2.Sobel(imgOut, cv2.CV_64F, 1, 0, ksize=5)
+sobelVertical = cv2.Sobel(imgOut, cv2.CV_64F, 0, 1, ksize=5)
 
 # Step 9: Plot Sobel outputs for ATU
 plt.figure(figsize=(12, 4))
@@ -48,7 +48,7 @@ plt.show()
 # Step 11: Perform Canny edge detection on the ATU image
 cannyThreshold = 100
 cannyParam2 = 200
-canny = cv2.Canny(imgGray, cannyThreshold, cannyParam2)
+canny = cv2.Canny(imgOut, cannyThreshold, cannyParam2)
 
 # Step 12: Plot the Canny edge detection result for ATU
 plt.imshow(canny, cmap='gray')
@@ -80,8 +80,8 @@ for i, kernel_size in enumerate(kernel_sizes_galway):
 plt.show()
 
 # Step 12: Perform Sobel operator on the Galway image
-sobelHorizontal_galway = cv2.Sobel(imgGray_galway, cv2.CV_64F, 1, 0, ksize=5)
-sobelVertical_galway = cv2.Sobel(imgGray_galway, cv2.CV_64F, 0, 1, ksize=5)
+sobelHorizontal_galway = cv2.Sobel(imgOut_galway, cv2.CV_64F, 1, 0, ksize=5)
+sobelVertical_galway = cv2.Sobel(imgOut_galway, cv2.CV_64F, 0, 1, ksize=5)
 
 # Step 13: Plot Sobel outputs for Galway
 plt.figure(figsize=(12, 4))
@@ -102,7 +102,7 @@ plt.show()
 # Step 15: Perform Canny edge detection on the Galway image
 cannyThreshold_galway = 100
 cannyParam2_galway = 200
-canny_galway = cv2.Canny(imgGray_galway, cannyThreshold_galway, cannyParam2_galway)
+canny_galway = cv2.Canny(imgOut_galway, cannyThreshold_galway, cannyParam2_galway)
 
 # Step 16: Plot the Canny edge detection result for Galway
 plt.imshow(canny_galway, cmap='gray')
