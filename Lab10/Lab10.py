@@ -45,3 +45,7 @@ for i, video_path in enumerate(video_paths):
     # Release the video capture object and the VideoWriter
     cap.release()
     output_video.release()
+
+    # Close the display window 
+    cv2.destroyAllWindows() 
+    print(f"Output video saved to: {output_path}")
